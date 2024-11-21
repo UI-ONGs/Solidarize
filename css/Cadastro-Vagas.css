@@ -1,0 +1,137 @@
+/* Estilos globais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Estilos para o corpo da página */
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f6f6f6;
+}
+
+/* Estilos para a caixa de entrada */
+.inputBox {
+    padding: 1.2rem;
+    position: relative;
+}
+
+/* Estilos para o campo de entrada do usuário */
+.inputUser {
+    background: none;
+    border: none;
+    border-bottom: 1px solid white;
+    outline: none;
+    color: white;
+    font-size: 0.6em;
+    width: 100%;
+    letter-spacing: 2px;
+}
+
+/* Estilos para o rótulo do campo de entrada */
+.labelInput {
+    padding-left: 1.2em;
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    transition: 0.5s;
+}
+
+/* Estilos para o rótulo do campo de entrada quando clicado ou se ja estiver com algo */
+.inputUser:focus ~ .labelInput,
+.inputUser:valid ~ .labelInput {
+    top: -1em;
+    font-size: 0.8em;
+    color: rgb(222, 243, 209);
+}
+
+/* Estilos para campos que não permitem escrita */
+.noWrite {
+    border: none;
+    padding: 0.5em;
+    border-radius: 0.5em;
+    outline: none;
+    font-size: 0.6em;
+}
+
+/* Estilos para a caixa de conteúdo */
+.box {
+    height: auto;
+    width: 70%;
+    position: absolute;
+    background-color: #45736A;
+    padding: 1em;
+    border-radius: 1em;
+    color: white;
+    animation: boxMove ease-in-out;
+    animation-duration: 5s;
+}
+
+@media only screen and (max-width: 600px) {
+    .box{
+        width: 95vw;
+        min-width: 15rem;
+        top:5em;
+    }
+}
+
+@keyframes boxMove{
+    from {bottom: -50vh;}
+    to {bottom: 6vh;}
+}
+
+/* Estilos para o botão */
+.botao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilos para o botão de enviar */
+#submit {
+    cursor: pointer;
+    font-size: 1em;
+    background-color: #f6f6f6;
+    color: #4D6E72;
+    padding: 1em;
+    border: none;
+    width: 100%;
+    border-radius: 1em;
+    font-weight: bold;
+    transition: 0.5s ease-in-out;
+}
+
+.counter{
+    font-size:x-small;
+}
+
+/* Estilos para o botão de enviar quando passa o mouse */
+#submit:hover {
+    background-color: #dfdddd;
+    padding: 1.5em;
+    font-size: 1.2em;
+    font-weight: bolder;
+}
+
+/* Estilos para o conjunto de opções */
+fieldset {
+    padding: 1em;
+    border: 0.1em solid #f6f6f6;
+    border-radius: 0.5em;
+}
+
+/* Estilos para a legenda do conjunto de opções */
+legend {
+    border: 1px solid #f6f6f6;
+    padding: 1em;
+    text-align: center;
+    background-color: #f6f6f6;
+    border-radius: 0.5em;
+    color: #4D6E72;
+}

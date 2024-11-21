@@ -1,0 +1,436 @@
+/* Estilos gerais */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+}
+
+.main-content {
+    margin-left: 5rem;
+    width: calc(100% - 5rem);
+}
+
+section{
+    /*border-radius: .9375rem;*/
+}
+
+/* Seção Hero */
+.hero {
+    height: 60vh;
+    background-image: url('../imagens/Friends.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+    
+}
+
+.hero-content {
+    text-align: right;
+    padding-right: 3.125rem;
+    z-index: 1;
+}
+
+.hero h1 {
+    color: white;
+    font-size: 2.25rem;
+    text-shadow: .125rem .125rem .25rem rgba(0,0,0,0.5);
+}
+
+@media (max-width: 48rem) {
+    .hero-content {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        text-align: center;
+    }
+
+    .hero{
+        justify-content: center;
+    }
+
+}
+
+/* Seção Sobre */
+.about {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 6.25rem 3.125rem 3.125rem 3.125rem;
+    background-color: white;
+    margin-bottom: 1.25rem;
+}
+
+.about-text {
+    flex: 1;
+    padding-right: 6.25rem;
+    text-align: justify;
+}
+
+.about-text p {
+    font-weight: bold;
+    font-size: 1.125rem;
+}
+
+.about-image {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .625rem;
+}
+
+.about-image h2 {
+    margin: 0;
+    font-size: 2rem;
+    text-align: center;
+}
+
+.about-image img {
+    max-width: 80%;
+    height: auto;
+    display: block;
+}
+
+/* Seção Patrocinadores */
+.sponsors {
+    padding: 3.125rem;
+    background-color: white;
+    margin-bottom: 1.25rem;
+}
+
+.sponsors h2 {
+    text-align: center;
+    margin-bottom: 1.875rem;
+}
+
+.sponsor-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.875rem;
+}
+
+.sponsor-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.sponsor-item i {
+    font-size: 2.5em;
+    color: #4A7C7C;
+    margin-bottom: .625rem;
+    transition: all 0.3s ease;
+}
+
+.sponsor-item:hover i {
+    color: #2A5C5C;
+    transform: scale(1.2);
+}
+
+.sponsor-item span {
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Seção Funcionalidades */
+.features {
+    max-width: 87.5rem;
+    margin: 1rem auto;
+    padding: 1rem;
+}
+
+.features-container {
+    display: flex;
+    margin-bottom: 2rem;
+    background-color: #fff;
+    border-radius: .5rem;
+    box-shadow: 0 .125rem .625rem rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.features-scroll {
+    flex: 2;
+    max-height: 25rem;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #024b4b #f0f0f0;
+}
+
+.features-scroll::-webkit-scrollbar {
+    width: .375rem;
+}
+
+.features-scroll::-webkit-scrollbar-track {
+    background: #f0f0f0;
+}
+
+.features-scroll::-webkit-scrollbar-thumb {
+    background-color: #4A7C7C;
+    border-radius: .1875rem;
+}
+
+.feature-item {
+    padding: 1.5rem;
+    border-bottom: .0625rem solid #e0e0e0;
+    transition: all 0.3s ease;
+}
+
+.feature-item:last-child {
+    border-bottom: none;
+}
+
+.feature-item:hover {
+    background-color: #e6f2f2;
+}
+
+.feature-item h3 {
+    color: #4A7C7C;
+    margin-bottom: .5rem;
+}
+
+.feature-link {
+    display: inline-block;
+    margin-top: .5rem;
+    color: #4A7C7C;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.feature-link:hover {
+    color: #2A5C5C;
+}
+
+
+.features-static {
+    flex: 1;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.features-static p{
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.features-static h2 {
+    font-size: 1.5rem;
+    margin-bottom: .5rem;
+    color: #333;
+}
+
+/* Aplica a barra de rolagem no lado esquerdo */
+.features-container:nth-of-type(2) {
+    direction: rtl; /* Move a barra de rolagem para o lado esquerdo */
+    text-align: left; /* Alinha o texto à esquerda */
+
+}
+
+.highlight {
+    color: #4A7C7C;
+    font-weight: bold;
+}
+
+@media (max-width: 48rem) {
+    .features-container {
+        flex-direction: column;
+        flex-direction: column-reverse;
+    }
+
+    .features-scroll {
+        max-height: none;
+    }
+
+    .features-static {
+        text-align: center;
+        padding: 1rem;
+    }
+}
+
+/* Seção Valores */
+.values {
+    max-width: 75rem;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+h2 {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+}
+
+.value-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+    gap: 2rem;
+}
+
+.value-item {
+    background-color: #fff;
+    border-radius: .5rem;
+    padding: 1.5rem .625rem;
+    text-align: center;
+    box-shadow: 0 .125rem .3125rem rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.value-item:hover {
+    transform: translateY(-0.3125rem);
+}
+
+.icon-container {
+    background-color: #f0f0f0;
+    width: 5rem;
+    height: 5rem;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto 1rem;
+}
+
+.icon-container i {
+    font-size: 2rem;
+    color: #4A7C7C;
+}
+
+h3 {
+    font-size: 1.2rem;
+    margin-bottom: .5rem;
+    color: #4A7C7C;
+}
+
+p {
+    font-size: .9rem;
+    color: #666;
+}
+
+@media (max-width: 48rem) {
+    .value-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Seção FAQ */
+.faq-section {
+    max-width: 75rem;
+    margin: 0 auto;
+    padding: 1.25rem;
+    position: relative;
+}
+h1 {
+    font-size: 1.5rem;
+    margin-bottom: 1.25rem;
+}
+.tabs {
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    display: flex;
+    gap: .9375rem;
+}
+.tab {
+    background: none;
+    border: none;
+    padding: .3125rem 0;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #666;
+    transition: color 0.3s ease;
+}
+.tab.active {
+    color: #4A7C7C;
+   
+}
+.faq-item {
+    border-bottom: .0625rem solid #ccc;
+    margin-bottom: .625rem;
+}
+.faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .625rem 0;
+    cursor: pointer;
+}
+.faq-answer {
+    display: none;
+    padding: .625rem 0;
+    color: #666;
+}
+.chevron {
+    transition: transform 0.3s ease;
+}
+.chevron.up {
+    transform: rotate(180deg);
+}
+@media (max-width: 40.625rem) {
+    .tabs {
+        position: static;
+        margin-bottom: 1.25rem;
+    }
+}
+
+/* Seção Newsletter */
+.newsletter {
+    background-color: #4A7C7C;
+    color: white;
+    text-align: center;
+    padding: 3.125rem;
+}
+
+#newsletter-form {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.25rem;
+}
+
+#newsletter-form input {
+    padding: .625rem;
+    width: 18.75rem;
+    margin-right: .625rem;
+}
+
+#newsletter-form button {
+    padding: .625rem 1.25rem;
+    background-color: white;
+    color: #4A7C7C;
+    border: none;
+    cursor: pointer;
+}
+
+/* Responsividade */
+@media (max-width: 48rem) {
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .about, .features {
+        flex-direction: column;
+    }
+
+    .about-text, .about-image {
+        padding-right: 0;
+        margin-bottom: 1.25rem;
+    }
+
+    .sponsor-grid,
+    .value-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
