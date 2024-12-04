@@ -1,84 +1,111 @@
+<?php
+session_start();
+require_once 'php/config.php';
+require_once 'php/check_auth.php';
+
+requireLogin();
+
+$userId = $_SESSION['user_id'];
+
+$stmt = $pdo->prepare("
+    SELECT u.*,
+           COALESCE(v.bio, i.descricao) as bio,
+           v.data_nascimento,
+           ip.base64_data AS imagem_perfil,
+           ic.base64_data AS imagem_capa
+    FROM USUARIO u
+    LEFT JOIN VOLUNTARIO v ON u.id = v.usuario_id
+    LEFT JOIN INSTITUICAO i ON u.id = i.usuario_id
+    LEFT JOIN IMAGEM ip ON u.imagem_perfil_id = ip.id
+    LEFT JOIN IMAGEM ic ON u.imagem_capa_id = ic.id
+    WHERE u.id = ?
+");
+
+$stmt->execute([$userId]);
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+
+function saidaImagem($dadosImagem, $imagemPadrao) {
+    if ($dadosImagem) {
+        echo "data:image/jpeg;base64," . $dadosImagem;
+    } else {
+        echo $imagemPadrao;
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Perfil</title>
-    <link rel="stylesheet" href="css/NavBar.css">
     <link rel="stylesheet" href="css/Perfil.css">
+    <link rel="stylesheet" href="css/NavBar.css">
+    <script src="js/NavBar.js" defer></script>
     <link rel="icon" href="imagens/logo.png">
     <script src="https://kit.fontawesome.com/0e6a916873.js" crossorigin="anonymous"></script>
-    <script src="js/NavBar.js" defer></script>
     <script src="js/Perfil.js" defer></script>
-    
 </head>
 <body>
-    <!--Adicionando a navbar da página em pc-->
+
     <!-- Include navbar -->
-    <?php include 'navbar.php'; ?>
+    <?php include 'NavBar.php'; ?>
+
     <div class="container">
         <div class="profile">
-            <!--Header-->
             <div class="wallpaper">
-                <img src="imagens/header.webp" alt="Wallpaper" id="wallpaperImg">
+                <img src="<?php saidaImagem($usuario['imagem_capa'], 'https://via.placeholder.com/800x200'); ?>" alt="Wallpaper" id="wallpaperImg">
             </div>
-            <!--Foto de Perfil-->
             <div class="profile-info">
                 <div class="profile-photo-container">
-                    <img src="imagens/gui_perfil.png" alt="Foto de perfil" class="profile-photo" id="profileImg">
+                    <img src="<?php saidaImagem($usuario['imagem_perfil'], 'https://via.placeholder.com/150'); ?>" alt="Foto de perfil" class="profile-photo" id="profileImg">
                 </div>
-                <!--Username e nickname-->
                 <div class="name-username">
-                    <h1 class="name">Guilherme do Carmo Souza</h1>
-                    <p class="username">@guilerme</p>
+                    <h1 class="name"><?php echo htmlspecialchars($usuario['nome']) ?></h1>
+                    <p class="username"><?php echo htmlspecialchars('@' . $usuario['username']) ?></p>
                 </div>
-                <!--Redes Sociais-->
-                <div class="social-icons">
-                    <a href="" id="instagramLink" target="_blank"><i class="fab fa-instagram"></i></a>
-                    <a href="" id="facebookLink" target="_blank"><i class="fab fa-facebook"></i></a>
-                    <a href="" id="whatsappLink" target="_blank"><i class="fab fa-whatsapp"></i></a>
-                </div>
-                <!--Edição de Perfil-->
                 <button class="edit-profile">Editar Perfil</button>
-                <!--Biografia-->
                 <div class="bio">
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid aspernatur quae impedit architecto enim dolores. Eos nobis pariatur consequuntur beatae voluptatem magnam possimus doloremque labore quis. Doloribus corrupti dolorem ipsum.</p>
+                    <p><?php echo !empty($usuario['bio']) ? nl2br(htmlspecialchars($usuario['bio'])) : "Nenhuma bio disponível."; ?></p>
                 </div>
-            </div>
-        </div>
-
-        <!--Adicionando colaboradores -->
-        <div class="collaborator">
-            <h2>Colaborador nas Instituições:</h2>
-            <div class="collaborator-slider">
-                <div class="collaborator-item"><img src="imagens/gui_perfil.png" alt="Colaborador 1"></div>
-                <div class="collaborator-item"><img src="imagens/dani_perfil.png" alt="Colaborador 2"></div>
-                <div class="collaborator-item"><img src="imagens/isa_perfil2.png" alt="Colaborador 3"></div>
-                <div class="collaborator-item"><img src="imagens/malu_perfil.png" alt="Colaborador 4"></div>
             </div>
         </div>
     </div>
+    <div class="profile-actions">
+            <a href="php/logout.php" class="logout-button">Sair</a>
+            <button class="deactivate-account">Desativar Conta</button>
+    </div>
 
-
-    <!--Aba de Edição-->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Editar Perfil</h2>
-            <div class="image-upload">
-                <label for="profileImageUpload">Alterar foto de perfil</label>
-                <input type="file" id="profileImageUpload" accept="image/*">
-                <label for="wallpaperImageUpload">Alterar wallpaper</label>
-                <input type="file" id="wallpaperImageUpload" accept="image/*">
-            </div>
-            <input type="text" id="editName" placeholder="Nome Completo">
-            <input type="text" id="editUsername" placeholder="Username">
-            <textarea id="editBio" placeholder="Bio" rows="4"></textarea>
-            <input type="url" id="editInstagram" placeholder="Link do Instagram">
-            <input type="url" id="editFacebook" placeholder="Link do Facebook">
-            <input type="url" id="editWhatsapp" placeholder="Link do WhatsApp">
-            <button id="saveProfile">Salvar</button>
+            <form id="edit-profile-form" enctype="multipart/form-data">
+                <div class="image-upload">
+                    <label for="profileImageUpload">Alterar foto de perfil</label>
+                    <input type="file" id="profileImageUpload" name="profile_pic" accept="image/*">
+                    <label for="wallpaperImageUpload">Alterar wallpaper</label>
+                    <input type="file" id="wallpaperImageUpload" name="cover_pic" accept="image/*">
+                </div>
+                <input type="text" id="editName" name="nome" placeholder="Nome Completo" value="<?php echo htmlspecialchars($usuario['nome']) ?>" required>
+                <input type="text" id="editUsername" name="username" placeholder="Username" value="<?php echo htmlspecialchars($usuario['username']) ?>" required>
+                <textarea id="editBio" name="bio" placeholder="Bio" rows="4" maxlength="150"><?php echo htmlspecialchars($usuario['bio']) ?></textarea>
+                <button type="submit">Salvar</button>
+            </form>
         </div>
-    </div>    
+    </div> 
+    
+    <div id="deactivateModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Desativar Conta</h2>
+        <p>Tem certeza que deseja desativar sua conta? Esta ação pode ser revertida entrando em contato com o suporte.</p>
+        <div class="modal-actions">
+            <button id="confirmDeactivate" class="danger-button">Sim, desativar conta</button>
+            <button id="cancelDeactivate" class="secondary-button">Cancelar</button>
+        </div>
+    </div>
+</div>
 </body>
 </html>
+

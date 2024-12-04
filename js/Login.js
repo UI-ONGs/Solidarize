@@ -25,6 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
         loadUsers();
         setupTextareas();
         setupEventListeners();
+        loadCategorias();
+        loadNecessidades();
     }
 
     // Verifica se há um usuário logado
@@ -174,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Function to validate username, email, and CNPJ with the server
     async function validateUniqueField(field, value) {
         try {
-            const response = await fetch('validate_fields.php', {
+            const response = await fetch('../php/validate_fields.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -191,7 +193,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return data.isUnique;
         } catch (error) {
             console.error('Error validating field:', error);
-            return false;
+            return true; // Assume it's unique if there's an error to prevent blocking registration
         }
     }
 
@@ -329,7 +331,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     
         try {
-            const response = await fetch('login.php', {
+            const response = await fetch('../php/login.php', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -338,25 +340,16 @@ document.addEventListener('DOMContentLoaded', () => {
             });
     
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Server response:', response.status, errorText);
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
     
-            const text = await response.text();
-            console.log('Server response:', text);  // Log the raw server response
-            let data;
-            try {
-                data = JSON.parse(text);
-            } catch (e) {
-                console.error('Failed to parse server response as JSON:', text);
-                throw new Error('Invalid server response');
-            }
+            const data = await response.json();
     
             if (data.success) {
                 showMessage('login-password', data.message, false);
+                // Redirect after a short delay to show the success message
                 setTimeout(() => {
-                    window.location.href = 'profile.php';
+                    window.location.href = '../Perfil.php';
                 }, 1500);
             } else {
                 showMessage('login-password', data.message, true);
@@ -367,6 +360,54 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    async function loadCategorias() {
+        try {
+            const response = await fetch('../php/functions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ action: 'getCategorias' })
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                const dropdown = document.querySelector('#multiselect-category .multiselect-dropdown');
+                dropdown.innerHTML = data.data.map(category => `
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="${category.id}"> ${category.nome}
+                    </label>
+                `).join('');
+            }
+        } catch (error) {
+            console.error('Error loading categories:', error);
+        }
+    }
+    
+    async function loadNecessidades() {
+        try {
+            const response = await fetch('../php/functions.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ action: 'getNecessidades' })
+            });
+            
+            const data = await response.json();
+            if (data.success) {
+                const dropdown = document.querySelector('#multiselect-donation .multiselect-dropdown');
+                dropdown.innerHTML = data.data.map(need => `
+                    <label class="multiselect-option">
+                        <input type="checkbox" value="${need.id}"> ${need.nome}
+                        <input type="number" class="need-quantity" min="1" placeholder="Quantidade">
+                    </label>
+                `).join('');
+            }
+        } catch (error) {
+            console.error('Error loading needs:', error);
+        }
+    }
 
     // Função para lidar com o primeiro passo do registro de voluntário
     // Update handleVolunteerRegister1 function
@@ -465,7 +506,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     
         try {
-            const response = await fetch('functions.php', {
+            const response = await fetch('../php/functions.php', {
                 method: 'POST',
                 body: formData
             });
@@ -498,24 +539,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
     // Função para lidar com o primeiro passo do registro de instituição
-     // Update handleInstitutionRegister1 function
-     async function handleInstitutionRegister1() {
+    async function handleInstitutionRegister1() {
         const fields = ['name', 'owner', 'cnpj', 'location', 'email', 'password', 'confirm-password'].map(field => ({
             id: `institution-${field}`,
             value: document.getElementById(`institution-${field}`).value
         }));
-
+    
         let isValid = true;
-
+    
         // Validation of fields
         if (!validators.email(fields.find(f => f.id === 'institution-email').value)) {
             showMessage('institution-email', 'E-mail inválido.', true);
             isValid = false;
         }
-
+    
         const password = fields.find(f => f.id === 'institution-password').value;
         const confirmPassword = fields.find(f => f.id === 'institution-confirm-password').value;
-
+    
         if (!validators.password(password)) {
             showMessage('institution-password', 'A senha deve ter pelo menos 8 caracteres.', true);
             isValid = false;
@@ -523,34 +563,34 @@ document.addEventListener('DOMContentLoaded', () => {
             showMessage('institution-password', 'As senhas não coincidem.', true);
             isValid = false;
         }
-
+    
         if (!validators.cnpj(fields.find(f => f.id === 'institution-cnpj').value)) {
             showMessage('institution-cnpj', 'CNPJ inválido.', true);
             isValid = false;
         }
-
+    
         const selectedCategories = getSelectedOptions('multiselect-category');
         if (selectedCategories.length === 0) {
             showMessage('institution-category', 'Selecione pelo menos uma categoria.', true);
             isValid = false;
         }
-
+    
         if (!isValid) return false;
-
+    
         // Check for unique email and CNPJ
         const isEmailUnique = await validateUniqueField('email', fields.find(f => f.id === 'institution-email').value);
         const isCnpjUnique = await validateUniqueField('cnpj', fields.find(f => f.id === 'institution-cnpj').value);
-
+    
         if (!isEmailUnique) {
             showMessage('institution-email', 'Este e-mail já está cadastrado.', true);
             return false;
         }
-
+    
         if (!isCnpjUnique) {
             showMessage('institution-cnpj', 'Este CNPJ já está cadastrado.', true);
             return false;
         }
-
+    
         tempFormData = {
             type: 'institution',
             name: fields.find(f => f.id === 'institution-name').value,
@@ -561,7 +601,7 @@ document.addEventListener('DOMContentLoaded', () => {
             email: fields.find(f => f.id === 'institution-email').value,
             password: password
         };
-
+    
         showSection('institutionRegister2');
         return true;
     }
@@ -618,7 +658,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         try {
-            const response = await fetch('functions.php', {
+            const response = await fetch('../php/functions.php', {
                 method: 'POST',
                 body: formData
             });

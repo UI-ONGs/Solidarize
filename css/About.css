@@ -260,6 +260,8 @@ section{
     }
 }
 
+
+
 /* Seção Valores */
 .values {
     max-width: 75rem;
@@ -318,12 +320,21 @@ p {
     font-size: .9rem;
     color: #666;
 }
-
 @media (max-width: 48rem) {
     .value-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0 1rem;
+    }
+
+    .value-item {
+        width: 100%;
+        margin: 0 auto;
+        max-width: 20rem;
     }
 }
+
+
 
 /* Seção FAQ */
 .faq-section {
@@ -385,34 +396,6 @@ h1 {
     }
 }
 
-/* Seção Newsletter */
-.newsletter {
-    background-color: #4A7C7C;
-    color: white;
-    text-align: center;
-    padding: 3.125rem;
-}
-
-#newsletter-form {
-    display: flex;
-    justify-content: center;
-    margin-top: 1.25rem;
-}
-
-#newsletter-form input {
-    padding: .625rem;
-    width: 18.75rem;
-    margin-right: .625rem;
-}
-
-#newsletter-form button {
-    padding: .625rem 1.25rem;
-    background-color: white;
-    color: #4A7C7C;
-    border: none;
-    cursor: pointer;
-}
-
 /* Responsividade */
 @media (max-width: 48rem) {
     .main-content {
@@ -429,8 +412,7 @@ h1 {
         margin-bottom: 1.25rem;
     }
 
-    .sponsor-grid,
-    .value-grid {
+    .sponsor-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 }

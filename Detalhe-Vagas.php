@@ -16,7 +16,8 @@
 <body>
     <!-- Barra de navegação -->
     <!-- Include navbar -->
-    <?php include 'navbar.php'; ?>
+    <?php include 'NavBar.php'; ?>
+
     <div class="box">
         <form action="">
             <fieldset>

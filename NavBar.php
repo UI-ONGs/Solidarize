@@ -1,3 +1,34 @@
+<?php
+session_start();
+require_once 'php/config.php';
+require_once 'php/check_auth.php';
+
+requireLogin();
+
+$loggedIn = false;
+$username = '';
+$profileImage = '';
+
+if (isset($_SESSION['user_id'])) {
+    $loggedIn = true;
+    $userId = $_SESSION['user_id'];
+
+    $stmt = $pdo->prepare("
+        SELECT u.username, ip.base64_data AS imagem_perfil
+        FROM USUARIO u
+        LEFT JOIN IMAGEM ip ON u.imagem_perfil_id = ip.id
+        WHERE u.id = ?
+    ");
+    $stmt->execute([$userId]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user) {
+        $username = $user['username'];
+        $profileImage = $user['imagem_perfil'] ? "data:image/jpeg;base64,{$user['imagem_perfil']}" : 'imagens/default_profile.png';
+    }
+}
+?>
+
 <!-- navbar.php -->
 <nav class="navbar">
     <div class="navbar-logo">
@@ -13,8 +44,12 @@
         <li><a href="About.php"><i class="fas fa-info-circle"></i><span>Sobre Nós</span></a></li>
     </ul>
     <div class="navbar-user">
-        <img src="imagens/user-avatar.png" alt="User Avatar" class="navbar-user-avatar">
-        <span class="navbar-user-name">Nome do Usuário</span>
+        <?php if ($loggedIn): ?>
+                    <img src="<?php echo htmlspecialchars($profileImage); ?>" alt="Foto do usuário" class="navbar-user-avatar">
+                    <span class="navbar-user-name"><?php echo htmlspecialchars($username); ?></span>
+            <?php else: ?>
+                    <a href="Login.php" class="login-link">Entrar</a>
+        <?php endif; ?>
     </div>
 </nav>
 

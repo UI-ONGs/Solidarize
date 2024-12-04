@@ -289,6 +289,15 @@ body {
     background-color: #45736A;
 }
 
+.char-counter{
+    display: block;
+    margin-bottom: 10px;
+}
+
+.error-message{
+    margin-bottom: 10px;
+}
+
 @media (max-width: 48rem) {
     .container {
         padding: .625rem;
@@ -348,3 +357,100 @@ body {
         padding: 1.25rem;
     }
 }
+
+/* Add these new styles to your existing CSS file */
+
+.profile-actions {
+    display: flex;
+    gap: 12px;
+    position: absolute;
+    top: 24px;
+    right: 24px;
+}
+
+.logout-button {
+    background-color: #65676b;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s;
+}
+
+.logout-button:hover {
+    background-color: #484a4d;
+}
+
+.deactivate-account {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.deactivate-account:hover {
+    background-color: #c82333;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.danger-button {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.danger-button:hover {
+    background-color: #c82333;
+}
+
+.secondary-button {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background-color 0.2s;
+}
+
+.secondary-button:hover {
+    background-color: #5a6268;
+}
+
+@media (max-width: 768px) {
+    .profile-actions {
+        position: static;
+        flex-direction: column;
+        margin-top: 16px;
+        width: 100%;
+    }
+
+    .profile-actions button,
+    .profile-actions a {
+        width: 100%;
+        text-align: center;
+    }
+}
+

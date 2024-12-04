@@ -1,3 +1,34 @@
+<?php
+session_start();
+require_once 'php/config.php';
+require_once 'php/check_auth.php';
+
+requireLogin();
+
+$loggedIn = false;
+$username = '';
+$profileImage = '';
+
+if (isset($_SESSION['user_id'])) {
+    $loggedIn = true;
+    $userId = $_SESSION['user_id'];
+
+    $stmt = $pdo->prepare("
+        SELECT u.username, ip.base64_data AS imagem_perfil
+        FROM USUARIO u
+        LEFT JOIN IMAGEM ip ON u.imagem_perfil_id = ip.id
+        WHERE u.id = ?
+    ");
+    $stmt->execute([$userId]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($user) {
+        $username = $user['username'];
+        $profileImage = $user['imagem_perfil'] ? "data:image/jpeg;base64,{$user['imagem_perfil']}" : 'imagens/default_profile.png';
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -6,6 +37,7 @@
     <title>Solidarize - Conectando ONGs para Causas Globais</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/NavBar.css">
+    <link rel="stylesheet" href="css/Footer.css">
     <link rel="icon" href="imagens/logo.png">
     <script src="https://kit.fontawesome.com/0e6a916873.js" crossorigin="anonymous"></script>
     <script src="js/script.js" defer></script>
@@ -13,7 +45,8 @@
 </head>
 <body>
      <!-- Include navbar -->
-     <?php include 'navbar.php'; ?>
+     <?php include 'NavBar.php'; ?>
+
 
     
     <main class="main-content">
@@ -26,9 +59,12 @@
             </div>
 
             <div class="user-menu">
-                <img src="imagens/gui_perfil.png" alt="Foto do usuário" class="user-avatar">
-                <span class="user-name">Olá, Voluntário</span>
-                <i class="fas fa-chevron-down"></i>
+                <?php if ($loggedIn): ?>
+                    <img src="<?php echo htmlspecialchars($profileImage); ?>" alt="Foto do usuário" class="user-avatar">
+                    <span class="user-name">Olá, <?php echo htmlspecialchars($username); ?></span>
+                <?php else: ?>
+                    <a href="Login.php" class="login-link">Entrar</a>
+                <?php endif; ?>
             </div>
         </header>
         <div class="content-area">
@@ -187,37 +223,7 @@
         </div>
     </main>
 </div>
-<footer class="main-footer">
-    <div class="footer-content">
-        <div class="footer-section">
-            <h4>Sobre o Portal ONGs</h4>
-            <p>Conectando pessoas e organizações para um mundo melhor. Junte-se a nós nessa jornada de transformação social.</p>
-        </div>
-        <div class="footer-section">
-            <h4>Links Rápidos</h4>
-            <ul>
-                <li><a href="#home">Início</a></li>
-                <li><a href="#events">Eventos</a></li>
-                <li><a href="#organizations">Organizações</a></li>
-                <li><a href="#volunteer">Voluntariado</a></li>
-                <li><a href="#donate">Doações</a></li>
-            </ul>
-        </div>
-        <div class="footer-section">
-            <h4>Contato</h4>
-            <p>Email: contato@portalongs.org</p>
-            <p>Telefone: (11) 1234-5678</p>
-            <div class="social-icons">
-                <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
-                <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
-            </div>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2023 Portal ONGs. Todos os direitos reservados.</p>
-    </div>
-</footer>
+    <!-- Include Footer -->
+    <?php include 'Footer.php'; ?>
 </body>
 </html>

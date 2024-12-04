@@ -1,10 +1,10 @@
 <?php
 
-$host = '';
-$db   = '';
-$user = '';
-$pass = '';
-$charset = '';
+$host = 'sql204.infinityfree.com';
+$db   = 'if0_37518337_solidarize';
+$user = 'if0_37518337';
+$pass = 'kIHOlFSMoi';
+$charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";
 $options = [

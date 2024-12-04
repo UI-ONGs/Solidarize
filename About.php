@@ -6,12 +6,13 @@
     <title>Sobre Nós - Solidarize</title>
     <link rel="stylesheet" href="css/About.css">
     <link rel="stylesheet" href="css/NavBar.css">
+    <link rel="stylesheet" href="css/Footer.css">
     <script src="https://kit.fontawesome.com/0e6a916873.js" crossorigin="anonymous"></script>
     <link rel="icon" href="imagens/logo.png">
 </head>
 <body>
     <!-- Include navbar -->
-    <?php include 'navbar.php'; ?>
+    <?php include 'NavBar.php'; ?>
 
     <!--Adicionando a navbar da página em smartphone-->
     <nav class="navbar-mobile">
@@ -192,18 +193,9 @@
         
         <div id="faq-container"></div>
     </section>
-    
-
-        <!-- Sessão de contato -->
-        <section id="newsletter" class="newsletter">
-            <h2>Fique por Dentro</h2>
-            <p>Receba atualizações sobre eventos, oportunidades de voluntariado e histórias inspiradoras.</p>
-            <form id="newsletter-form">
-                <input type="email" placeholder="Seu melhor e-mail" required>
-                <button type="submit">Inscrever-se</button>
-            </form>
-        </section>
     </main>
+    <!-- Include Footer -->
+    <?php include 'Footer.php'; ?>
 
     <script src="js/About.js"></script>
 </body>

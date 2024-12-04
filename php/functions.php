@@ -44,7 +44,7 @@ function registerUser($userData, $userType) {
             ) VALUES (
                 :nome, :username, :senha, :email, :tipo_usuario,
                 :imagem_perfil_id, :imagem_capa_id, NOW(),
-                NOW(), 'ativo', NOW(), NOW()
+                NOW(), 'ATIVO', NOW(), NOW()
             )
         ");
         
@@ -60,7 +60,81 @@ function registerUser($userData, $userType) {
         
         $userId = $pdo->lastInsertId();
         
-        // Additional user type specific registration logic can be added here
+        // Additional user type specific registration logic
+        if ($userType === 'INSTITUICAO') {
+            $stmt = $pdo->prepare("
+                INSERT INTO INSTITUICAO (
+                    usuario_id, cnpj, descricao, missao, visao, valores,
+                    localizacao, website, data_fundacao, tamanho
+                ) VALUES (
+                    :usuario_id, :cnpj, :descricao, :missao, :visao, :valores,
+                    :localizacao, :website, NOW(), :tamanho
+                )
+            ");
+            
+            $stmt->execute([
+                ':usuario_id' => $userId,
+                ':cnpj' => $userData['cnpj'],
+                ':descricao' => $userData['description'] ?? null,
+                ':missao' => $userData['mission'] ?? null,
+                ':visao' => $userData['vision'] ?? null,
+                ':valores' => $userData['values'] ?? null,
+                ':localizacao' => $userData['location'] ?? null,
+                ':website' => $userData['website'] ?? null,
+                ':tamanho' => $userData['size'] ?? null
+            ]);
+
+            // Insert institution needs with quantities
+            if (!empty($userData['needs'])) {
+                $stmt = $pdo->prepare("
+                    INSERT INTO INSTITUICAO_NECESSIDADE (
+                        instituicao_id, necessidade_id, quantidade
+                    ) VALUES (
+                        :instituicao_id, :necessidade_id, :quantidade
+                    )
+                ");
+
+                foreach ($userData['needs'] as $need) {
+                    $stmt->execute([
+                        ':instituicao_id' => $userId,
+                        ':necessidade_id' => $need['id'],
+                        ':quantidade' => $need['quantidade']
+                    ]);
+                }
+            }
+
+            // Insert institution categories
+            if (!empty($userData['categories'])) {
+                $stmt = $pdo->prepare("
+                    INSERT INTO USUARIO_CATEGORIA (
+                        usuario_id, categoria_id
+                    ) VALUES (
+                        :usuario_id, :categoria_id
+                    )
+                ");
+
+                foreach ($userData['categories'] as $categoryId) {
+                    $stmt->execute([
+                        ':usuario_id' => $userId,
+                        ':categoria_id' => $categoryId
+                    ]);
+                }
+            }
+        } elseif ($userType === 'VOLUNTARIO') {
+            $stmt = $pdo->prepare("
+                INSERT INTO VOLUNTARIO (
+                    usuario_id, data_nascimento, bio
+                ) VALUES (
+                    :usuario_id, :data_nascimento, :bio
+                )
+            ");
+            
+            $stmt->execute([
+                ':usuario_id' => $userId,
+                ':data_nascimento' => $userData['data_nascimento'] ?? null,
+                ':bio' => $userData['bio'] ?? null
+            ]);
+        }
         
         $pdo->commit();
         return ['success' => true, 'message' => 'Cadastro realizado com sucesso!'];
@@ -72,53 +146,27 @@ function registerUser($userData, $userType) {
     }
 }
 
-// Handle POST requests
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $action = $_POST['action'] ?? '';
-    
-    switch ($action) {
-        case 'registerVolunteer':
-        case 'registerInstitution':
-            $response = registerUser($_POST, $action === 'registerVolunteer' ? 'VOLUNTARIO' : 'INSTITUICAO');
-            break;
-            
-        case 'login':
-            $response = loginUser($_POST['email'], $_POST['password']);
-            break;
-            
-        default:
-            $response = ['success' => false, 'message' => 'Ação inválida'];
-    }
-    
-    header('Content-Type: application/json');
-    echo json_encode($response);
-    exit;
-}
-
-function loginUser($email, $password) {
+// Function to get categories from database
+function getCategorias() {
     global $pdo;
-    
     try {
-        $stmt = $pdo->prepare("SELECT * FROM USUARIO WHERE email = :email");
-        $stmt->execute([':email' => $email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
-        
-        if ($user && password_verify($password, $user['senha'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_name'] = $user['nome'];
-            $_SESSION['user_type'] = $user['tipo_usuario'];
-            
-            // Update last access
-            $updateStmt = $pdo->prepare("UPDATE USUARIO SET ultimo_acesso = NOW() WHERE id = :id");
-            $updateStmt->execute([':id' => $user['id']]);
-            
-            return ['success' => true, 'message' => 'Login realizado com sucesso!'];
-        } else {
-            return ['success' => false, 'message' => 'E-mail ou senha inválidos.'];
-        }
+        $stmt = $pdo->query("SELECT id, nome FROM CATEGORIA ORDER BY nome");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        error_log("Error in login: " . $e->getMessage());
-        return ['success' => false, 'message' => 'Erro ao realizar login.'];
+        error_log("Error fetching categories: " . $e->getMessage());
+        return [];
+    }
+}
+
+// Function to get needs from database
+function getNecessidades() {
+    global $pdo;
+    try {
+        $stmt = $pdo->query("SELECT id, nome FROM NECESSIDADE ORDER BY nome");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    } catch (PDOException $e) {
+        error_log("Error fetching needs: " . $e->getMessage());
+        return [];
     }
 }
 
@@ -128,14 +176,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     
     switch ($action) {
         case 'registerVolunteer':
-        case 'registerInstitution':
-            $response = registerUser($_POST, $action === 'registerVolunteer' ? 'VOLUNTARIO' : 'INSTITUICAO');
+            $userData = [
+                'name' => $_POST['name'] ?? '',
+                'username' => $_POST['username'] ?? '',
+                'email' => $_POST['email'] ?? '',
+                'password' => $_POST['password'] ?? '',
+                'data_nascimento' => $_POST['dob'] ?? null,
+                'bio' => $_POST['description'] ?? null
+            ];
+            $response = registerUser($userData, 'VOLUNTARIO');
             break;
-            
+        case 'registerInstitution':
+            $userData = [
+                'name' => $_POST['name'] ?? '',
+                'email' => $_POST['email'] ?? '',
+                'password' => $_POST['password'] ?? '',
+                'cnpj' => $_POST['cnpj'] ?? '',
+                'description' => $_POST['description'] ?? null,
+                'mission' => $_POST['mission'] ?? null,
+                'vision' => $_POST['vision'] ?? null,
+                'values' => $_POST['values'] ?? null,
+                'location' => $_POST['location'] ?? null,
+                'website' => $_POST['website'] ?? null,
+                'size' => $_POST['size'] ?? null,
+                'categories' => $_POST['categories'] ?? [],
+                'needs' => $_POST['needs'] ?? []
+            ];
+            $response = registerUser($userData, 'INSTITUICAO');
+            break;
         case 'login':
             $response = loginUser($_POST['email'], $_POST['password']);
             break;
-            
+        case 'getCategorias':
+            $response = ['success' => true, 'data' => getCategorias()];
+            break;
+        case 'getNecessidades':
+            $response = ['success' => true, 'data' => getNecessidades()];
+            break;
         default:
             $response = ['success' => false, 'message' => 'Ação inválida'];
     }

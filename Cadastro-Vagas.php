@@ -8,56 +8,17 @@
         <link rel="stylesheet" href="css/NavBar.css">
         <!--link para utilizar os icones-->
         <script src="https://kit.fontawesome.com/0e6a916873.js" crossorigin="anonymous"></script>
-        <script defer src="js/Cadastro-Vagas.js"></script>
+        <script src="js/Cadastro-Vagas.js"></script>
         <script src="js/NavBar.js" defer></script>
         <!-- Link para o FavIcon -->
         <link rel="icon" href="imagens/logo.png">
     </head>
     <body>
-        <!-- Barra de navegação -->
-        <!-- Include navbar -->
-        <?php include 'navbar.php'; ?>
-    
-        <div class="navbar-mobile">
-            <div class="navbar-mobile-header">
-                <img src="imagens/logo.png" alt="Solidarize Logo" class="navbar-mobile-logo">
-                <button class="navbar-mobile-toggle">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-            <ul class="navbar-mobile-menu">
-                <li><a href="index.html"><i class="fas fa-home"></i><span>Home</span></a></li>
-                <li><a href="Perfil.html"><i class="fas fa-user"></i><span>Perfil</span></a></li>
-                <li><a href="Calendario.html"><i class="fas fa-calendar-alt"></i><span>Eventos</span></a></li>
-                <li><a href="Vagas.html"><i class="fas fa-hands-helping"></i><span>Voluntariados</span></a></li>
-                <li><a href="Geo-Map.html"><i class="fas fa-map-marked-alt"></i><span>Mapa</span></a></li>
-                <li><a href="About.html"><i class="fas fa-info-circle"></i><span>Sobre Nós</span></a></li>
-            </ul>
-        </div>
-    
-        <nav class="navbar-mobile">
-            <div class="navbar-mobile-header">
-                <img src="imagens/logo.png" alt="Solidarize Logo" class="navbar-mobile-logo">
-                <button class="navbar-mobile-toggle" aria-label="Toggle menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-            <ul class="navbar-mobile-menu">
-                <li><a href="index.html"><i class="fas fa-home"></i>Home</a></li>
-                <li><a href="Perfil.html"><i class="fas fa-user"></i>Perfil</a></li>
-                <li><a href="Calendario.html"><i class="fas fa-calendar-alt"></i>Eventos</a></li>
-                <li><a href="Vagas.html"><i class="fas fa-hands-helping"></i>Voluntariados</a></li>
-                <li><a href="Geo-Map.html"><i class="fas fa-map-marked-alt"></i>Mapa</a></li>
-                <li><a href="About.html"><i class="fas fa-info-circle"></i>Sobre Nós</a></li>
-            </ul>
-        </nav>
+        <!-- Inclusão da barra de navegação -->
+        <?php include 'NavBar.php'; ?>
         <div class="box">
             <!-- formulário -->
-            <form id="form"> 
+            <form method="POST" id="form" action="Cadastro-Vagas.php"> 
                 <fieldset>
                     <legend><b>Formulário de Vagas</b></legend>
                             <!-- Inputs -->
@@ -100,6 +61,39 @@
                 </fieldset>
             </form>
         </div>
+        <?php
+            include_once('config.php'); 
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $nome = htmlspecialchars(trim($_POST['nome']));
+                $tipo = htmlspecialchars(trim($_POST['tipo']));
+                $endereco = htmlspecialchars(trim($_POST['Endereco']));
+                $data = htmlspecialchars(trim($_POST['data']));
+                $horario_inicio = htmlspecialchars(trim($_POST['horarioI']));
+                $horario_fim = htmlspecialchars(trim($_POST['horarioF']));
+                $descricao = htmlspecialchars(trim($_POST['desc']));                
+
+                echo "nome" ;
+
+                $sql = "INSERT INTO vagas (nome, tipo, endereco, data, horarioI, horarioF, descricao) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?)";
+                
+                $stmt = $mysqli->prepare($sql);
+
+                if ($stmt) {
+                    $stmt->bind_param('sssssss', $nome, $tipo, $endereco, $data, $horario_inicio, $horario_fim, $descricao);
+
+                    if (!$stmt->execute()) {
+                        echo "<p>Erro ao cadastrar a vaga: " . htmlspecialchars($stmt->error) . "</p>";
+                    }
+
+                    $stmt->close();
+                } else {
+                    echo "<p>Erro na preparação do SQL: " . htmlspecialchars($mysqli->error) . "</p>";
+                }
+                $mysqli->close();
+            }
+        ?>
 </body>
 </html>
 

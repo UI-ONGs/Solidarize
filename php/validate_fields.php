@@ -11,27 +11,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $value = $data['value'] ?? '';
 
     if (empty($field) || empty($value)) {
-        echo json_encode(['isUnique' => false, 'message' => 'Invalid input']);
+        echo json_encode(['isUnique' => false, 'message' => 'Entrada inválida']);
         exit;
     }
 
     // Whitelist allowed fields to prevent SQL injection
     $allowedFields = ['username', 'email', 'cnpj'];
     if (!in_array($field, $allowedFields)) {
-        echo json_encode(['isUnique' => false, 'message' => 'Invalid field']);
+        echo json_encode(['isUnique' => false, 'message' => 'Campo inválido']);
         exit;
     }
 
     try {
-        $stmt = $pdo->prepare("SELECT COUNT(*) FROM USUARIO WHERE $field = :value");
+        if ($field === 'cnpj') {
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM INSTITUICAO WHERE cnpj = :value");
+        } else {
+            $stmt = $pdo->prepare("SELECT COUNT(*) FROM USUARIO WHERE $field = :value");
+        }
+        
         $stmt->execute([':value' => $value]);
         $count = $stmt->fetchColumn();
 
         echo json_encode(['isUnique' => ($count === 0), 'field' => $field, 'value' => $value]);
     } catch (PDOException $e) {
-        error_log("Error validating field: " . $e->getMessage());
-        echo json_encode(['isUnique' => false, 'message' => 'Error validating field']);
+        error_log("Erro ao validar campo: " . $e->getMessage());
+        echo json_encode(['isUnique' => false, 'message' => 'Erro ao validar campo']);
     }
 } else {
-    echo json_encode(['isUnique' => false, 'message' => 'Invalid request method']);
+    echo json_encode(['isUnique' => false, 'message' => 'Método de requisição inválido']);
 }

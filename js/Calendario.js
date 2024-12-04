@@ -1,513 +1,420 @@
-// Variável global para armazenar o número de arquivos
-let fileCount = 0;
+// DOM Elements
+const calendarGrid = document.getElementById('calendar-grid');
+const currentMonthElement = document.getElementById('current-month');
+const prevMonthButton = document.getElementById('prev-month');
+const nextMonthButton = document.getElementById('next-month');
+const eventListContainer = document.getElementById('event-list-container');
+const newEventButton = document.getElementById('new-event-btn');
+const eventModal = document.getElementById('event-modal');
+const eventForm = document.getElementById('event-form');
+const eventDetailsModal = document.getElementById('event-details-modal');
+const attendEventButton = document.getElementById('attend-event-btn');
+const dateSearch = document.getElementById('date-search');
+const searchBtn = document.getElementById('search-btn');
 
-// Seleciona o elemento de upload de arquivos globalmente
-const fileUploadElement = document.getElementById('file-upload');
+// Variáveis globais
+let currentDate = new Date();
+let events = JSON.parse(localStorage.getItem('events')) || [];
+let selectedEventId = null;
+let map, eventMap, geocoder, marker;
 
-// Função para contar os arquivos selecionados
-fileUploadElement.addEventListener('change', function () {
-    fileCount = this.files.length;
-    var fileCountSpan = document.querySelector('.file-count');
-    if (fileCount === 1) {
-        fileCountSpan.textContent = '1 arquivo selecionado';
-    } else {
-        fileCountSpan.textContent = fileCount + ' arquivos selecionados';
-    }
-});
+// Categorias dos eventos e cores
+const CATEGORIES = {
+    'Educação': '#4CAF50',
+    'Saúde': '#2196F3',
+    'Meio Ambiente': '#FFC107',
+    'Direitos Humanos': '#FF5722',
+    'Cultura': '#9C27B0'
+};
 
-const calendar = document.querySelector(".calendar"),
-    date = document.querySelector(".date"),
-    daysContainer = document.querySelector(".days"),
-    prev = document.querySelector(".prev"),
-    next = document.querySelector(".next"),
-    todayBtn = document.querySelector(".today-btn"),
-    gotoBtn = document.querySelector(".goto-btn"),
-    dateInput = document.querySelector(".date-input"),
-    eventDay = document.querySelector(".event-day"),
-    eventDate = document.querySelector(".event-date"),
-    eventsContainer = document.querySelector(".events"),
-    addEventSubmit = document.querySelector(".add-event-btn");
+// Inicializa o mapa
+function initMaps() {
+    const vitoria = [-20.2976, -40.2958]; // Coordenadas de Vitória
 
-let today = new Date();
-let activeDay;
-let month = today.getMonth();
-let year = today.getFullYear();
+    map = L.map('map').setView(vitoria, 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
 
-const months = [
-    "Janeiro",
-    "Fevereiro",
-    "Março",
-    "Abril",
-    "Maio",
-    "Junho",
-    "Julho",
-    "Agosto",
-    "Setembro",
-    "Outubro",
-    "Novembro",
-    "Dezembro",
-];
+    eventMap = L.map('event-details-map').setView(vitoria, 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(eventMap);
 
-//Eventos padrão
-/*const eventsArr = [
-    {
-        day: 18,
-        month: 4,
-        year: 2024,
-        events: [
-            {
-                title: "Event 1 lorem ipsun dolar sit genfa tersd dasd",
-                time: "10:00 AM"
-            },
-            {
-                title: "Event 2",
-                time: "11:00 AM",
-            },
-        ],
-    },
-    {
-        day: 22,
-        month: 4,
-        year: 2024,
-        events: [
-            {
-                title: "Event 1 lorem ipsun dolar sit genfa tersd dasd",
-                time: "10:00 AM"
-            },
-            {
-                title: "Event 2",
-                time: "11:00 AM",
-            },
-        ],
-    }
-];*/
+    // Use o controle geocodificador integrado
+    const geocoder = L.Control.geocoder({
+        defaultMarkGeocode: false
+    }).addTo(map);
 
-//define um array vazio
-let eventsArr = [];
+    geocoder.on('markgeocode', function(e) {
+        const latlng = e.geocode.center;
+        map.setView(latlng, 13);
+        updateLocationField(e.geocode);
+    });
 
-//e em seguida chama o get
-getEvents();
+    map.on('click', function(e) {
+        geocoder.reverse(e.latlng, map.options.crs.scale(map.getZoom()), function(results) {
+            if (results.length > 0) {
+                updateLocationField(results[0]);
+            }
+        });
+    });
+}
 
-//função para adicionar dias
+function updateLocationField(result) {
+    const address = result.name || result.html;
+    document.getElementById('event-location').value = address;
+}
 
-function initCalendar() {
-    //função para adicionar dias no contêiner com a classe day, prev-date, next-date nos dias do mês anterior e próximo, e active no dia atual
+
+// Renderiza o calendário
+function renderCalendar() {
+    const year = currentDate.getFullYear();
+    const month = currentDate.getMonth();
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-    const prevLastDay = new Date(year, month, 0);
-    const prevDays = prevLastDay.getDate();
-    const lastDate = lastDay.getDate();
-    const day = firstDay.getDay();
-    const nextDays = 7 - lastDay.getDay() - 1;
+    const daysInMonth = lastDay.getDate();
 
-    date.innerHTML = months[month] + " " + year;
+    currentMonthElement.textContent = `${firstDay.toLocaleString('pt-BR', { month: 'long' })} ${year}`;
 
-    //adicionar dias
+    calendarGrid.innerHTML = '';
 
-    let days = "";
-
-    //dias do mês passado
-
-    for (let x = day; x > 0; x--) {
-        days += `<div class= "day prev-date" >${prevDays - x + 1}</div>`;
+    for (let i = 0; i < firstDay.getDay(); i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.classList.add('calendar-day');
+        calendarGrid.appendChild(emptyDay);
     }
 
-    //quantidade de dias do mês atual
+    for (let day = 1; day <= daysInMonth; day++) {
+        const dayElement = document.createElement('div');
+        dayElement.classList.add('calendar-day');
+        dayElement.textContent = day;
 
-    for (let i = 1; i <= lastDate; i++) {
-
-        //checa se há um evento no dia atual
-        let event = false;
-        eventsArr.forEach((eventObj) => {
-            if (
-                eventObj.day === i &&
-                eventObj.month === month + 1 &&
-                eventObj.year === year
-            ) {
-                //se o evento for encontrado
-                event = true;
-            }
-        });
-
-        //se o dia é hoje adicione a classe today
-        if (i === new Date().getDate()
-            && year === new Date().getFullYear()
-            && month === new Date().getMonth()) {
-
-            activeDay = i;
-            getActiveDay(i);
-            updateEvents(i);
-            //se event for encontrado, adicione a classe event
-            //adiciona 'active' no dia de hoje quando inicializado
-            if (event) {
-                days += `<div class="day today active event">${i}</div>`;
-            }
-            else {
-                days += `<div class="day today active">${i}</div>`;
-            }
+        const dateString = `${year}-${(month + 1).toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}`;
+        const isToday = dateString === new Date().toISOString().split('T')[0];
+        if (isToday) {
+            dayElement.classList.add('today');
         }
-        //adiciona o resto dos dias
-        else {
-            if (event) {
-                days += `<div class="day event">${i}</div>`;
-            }
-            else {
-                days += `<div class="day">${i}</div>`;
-            }
-        }
-    }
 
-    //dias do próximo mês
-    for (let j = 1; j <= nextDays; j++) {
-        days += `<div class="day next-date" >${j}</div>`;
-    }
-
-    daysContainer.innerHTML = days;
-    //adiciona listener depois que o calendário é inicializado
-    addListener();
-}
-
-initCalendar();
-
-//mês passado
-function prevMonth() {
-    month--;
-    if (month < 0) {
-        month = 11;
-        year--;
-    }
-    initCalendar();
-}
-
-//próximo mês
-function nextMonth() {
-    month++;
-    if (month > 11) {
-        month = 0;
-        year++;
-    }
-    initCalendar();
-}
-
-//executa a função quando houver o clique
-
-prev.addEventListener("click", prevMonth);
-next.addEventListener("click", nextMonth);
-
-// calendário está pronto
-//adicionar 'vá para data especificada' e 'vá para hoje'
-
-todayBtn.addEventListener("click", () => {
-    today = new Date();
-    month = today.getMonth();
-    year = today.getFullYear();
-    initCalendar();
-});
-
-dateInput.addEventListener("input", (e) => {
-    //permite somente números e remove o resto
-    dateInput.value = dateInput.value.replace(/[^0-9/]/g, "");
-    if (dateInput.value.length === 2) {
-        //adiciona a '/' depois de dois números digitados
-        dateInput.value += '/';
-    }
-    if (dateInput.value.length > 7) {
-        //não permite mais de 7 caracteres
-        dateInput.value = dateInput.value.slice(0, 7);
-    }
-
-    //se o backspace for pressionado
-    if (e.inputType === "deleteContentBackward") {
-        if (dateInput.value.length === 3) {
-            dateInput.value = dateInput.value.slice(0, 2);
-        }
-    }
-});
-
-gotoBtn.addEventListener("click", gotoDate);
-
-//ir para a data digitada
-function gotoDate() {
-    const dateArr = dateInput.value.split("/");
-
-    //validação da data
-    if (dateArr.length === 2) {
-        if (dateArr[0] > 0 && dateArr[0] < 13 && dateArr[1].length === 4) {
-            month = dateArr[0] - 1;
-            year = dateArr[1];
-            initCalendar();
-            return;
-        }
-    }
-
-    //se a data for inválida
-    alert("Data inválida");
-}
-
-const addEventBtn = document.querySelector(".add-event"),
-    addEventContainer = document.querySelector(".add-event-wrapper"),
-    addEventCloseBtn = document.querySelector(".close"),
-    addEventTitle = document.querySelector(".event-name"),
-    addEventFrom = document.querySelector(".event-time-from"),
-    addEventTo = document.querySelector(".event-time-to");
-
-addEventBtn.addEventListener("click", () => {
-    addEventContainer.classList.toggle("active");
-});
-
-addEventCloseBtn.addEventListener("click", () => {
-    addEventContainer.classList.remove("active");
-});
-
-document.addEventListener("click", (e) => {
-    //se clicar fora (da caixa) fechar ela
-    if (e.target !== addEventBtn && !addEventContainer.contains(e.target)) {
-        addEventContainer.classList.remove("active");
-    }
-});
-
-//permite apenas 50 caracteres no título
-addEventTitle.addEventListener("input", (e) => {
-    addEventTitle.value = addEventTitle.value.slice(0, 50);
-});
-
-//formatação do tempo (EventFrom)
-addEventFrom.addEventListener("input", (e) => {
-    //remove tudo que não for números
-    addEventFrom.value = addEventFrom.value.replace(/[^0-9:]/g, "");
-    //após dois números digitados, acrescente ':'
-    if (addEventFrom.value.length === 2) {
-        addEventFrom.value += ':';
-    }
-
-    //não permite o usuário digitar mais de 4 números (+1 dos dois pontos)
-    if (addEventFrom.value.length > 5) {
-        addEventFrom.value = addEventFrom.value.slice(0, 5);
-    }
-});
-
-// formatação do tempo (EventTo)
-addEventTo.addEventListener("input", (e) => {
-    // remove tudo que não for números
-    addEventTo.value = addEventTo.value.replace(/[^0-9:]/g, "");
-    // após dois números digitados, acrescente ':'
-    if (addEventTo.value.length === 2) {
-        addEventTo.value += ':';
-    }
-    // não permite que o usuário digite mais de 5 caracteres
-    if (addEventTo.value.length > 5) {
-        addEventTo.value = addEventTo.value.slice(0, 5);
-    }
-});
-
-// função para adicionar listener em dias após serem renderizados
-function addListener() {
-    const days = document.querySelectorAll(".day");
-    days.forEach((day) => {
-        day.addEventListener("click", (e) => {
-            // define o dia ativo como o dia clicado
-            activeDay = Number(e.target.innerHTML);
-
-            // chama getActiveDay após o clique
-            getActiveDay(e.target.innerHTML);
-            updateEvents(Number(e.target.innerHTML));
-
-            // remove a classe 'active' do dia ativo anterior
-            days.forEach((day) => {
-                day.classList.remove('active');
+        const dayEvents = events.filter(event => event.date === dateString);
+        if (dayEvents.length > 0) {
+            const eventIndicator = document.createElement('div');
+            eventIndicator.classList.add('event-indicator');
+            dayEvents.slice(0, 3).forEach(event => {
+                const dot = document.createElement('span');
+                dot.style.backgroundColor = CATEGORIES[event.category];
+                eventIndicator.appendChild(dot);
             });
+            dayElement.appendChild(eventIndicator);
+        }
 
-            // se clicar em um dia do mês anterior, vai para o mês anterior e adiciona a classe 'active'
-            if (e.target.classList.contains("prev-date")) {
-                prevMonth();
-                setTimeout(() => {
-                    // seleciona todos os dias deste mês
-                    const days = document.querySelectorAll(".day");
+        dayElement.addEventListener('click', () => showEventsForDay(dateString));
 
-                    // após ir para o mês anterior, adiciona a classe 'active' ao dia clicado
-                    days.forEach((day) => {
-                        if (!day.classList.contains("prev-date") && day.innerHTML === e.target.innerHTML) {
-                            day.classList.add("active");
-                        }
-                    });
-                }, 100);
-            } 
-            // mesma coisa para dias do próximo mês
-            else if (e.target.classList.contains("next-date")) {
-                nextMonth();
-                setTimeout(() => {
-                    // seleciona todos os dias deste mês
-                    const days = document.querySelectorAll(".day");
+        calendarGrid.appendChild(dayElement);
+    }
+}
 
-                    // após ir para o próximo mês, adiciona a classe 'active' ao dia clicado
-                    days.forEach((day) => {
-                        if (!day.classList.contains("next-date") && day.innerHTML === e.target.innerHTML) {
-                            day.classList.add("active");
-                        }
-                    });
-                }, 100);
-            }
+// Mostra os eventos do dia especifico
+function showEventsForDay(dateString) {
+    eventListContainer.innerHTML = '';
+    const dayEvents = events.filter(event => event.date === dateString);
 
-            // adiciona a classe 'active' aos dias restantes do mês atual
-            e.target.classList.add("active");
+    if (dayEvents.length > 0) {
+        dayEvents.forEach(event => {
+            const eventItem = document.createElement('div');
+            eventItem.classList.add('event-item');
+            eventItem.innerHTML = `
+                <h3>${event.title}</h3>
+                <p>${event.category}</p>
+            `;
+            eventItem.addEventListener('click', () => showEventDetails(event));
+            eventListContainer.appendChild(eventItem);
         });
+    } else {
+        eventListContainer.innerHTML = '<p>Nenhum evento para este dia.</p>';
+    }
+
+    document.querySelectorAll('.calendar-day').forEach(day => {
+        day.classList.remove('active');
+        if (day.textContent === dateString.split('-')[2]) {
+            day.classList.add('active');
+        }
     });
 }
 
-// mostra o dia e a data do evento no topo
-function getActiveDay(date) {
-    const day = new Date(year, month, date);
-    const dayName = day.toString().split(" ")[0];
-    eventDay.innerHTML = dayName;
-    eventDate.innerHTML = date + ' ' + months[month] + ' ' + year;
-}
+// Mostre os detalhes do evento especifico
+function showEventDetails(event) {
+    selectedEventId = event.id;
+    document.getElementById('event-details-title').textContent = event.title;
+    document.getElementById('event-details-institution').textContent = event.institution;
+    document.getElementById('event-details-category').textContent = event.category;
+    document.getElementById('event-details-date').textContent = new Date(event.date).toLocaleDateString('pt-BR');
+    document.getElementById('event-details-time').textContent = event.time;
+    document.getElementById('event-details-location').textContent = event.location;
+    document.getElementById('event-details-description').textContent = event.description;
+    document.getElementById('event-details-capacity').textContent = event.capacity;
+    document.getElementById('event-details-attendance').textContent = event.attendance;
+    document.getElementById('event-details-contact').textContent = event.contact;
+    document.getElementById('event-details-sponsors').textContent = event.sponsors || 'Não informado';
 
-// função para mostrar eventos de um dia específico
-function updateEvents(date) {
-    let events = "";
-    eventsArr.forEach((event) => {
-        // pega eventos apenas dos dias ativos
-        if (date === event.day && month + 1 === event.month && year === event.year) {
-            // mostra os eventos no documento
-            event.events.forEach((event) => {
-                events += `
-                <div class="event">
-                    <div class="title">
-                        <i class="fas fa-circle"></i>
-                        <h3 class="event-title">${event.title}</h3>
-                    </div>
-                    <div class="event-time">
-                        <span class="event-time">${event.time}</span>
-                    </div>
-                </div>`;
-            });
-        }
+    const imageSlider = document.getElementById('event-images-slider');
+    const sliderDots = document.getElementById('slider-dots');
+    imageSlider.innerHTML = '';
+    sliderDots.innerHTML = '';
+
+    event.images.forEach((image, index) => {
+        const img = document.createElement('img');
+        img.src = image;
+        img.alt = `Imagem ${index + 1} do evento`;
+        img.classList.toggle('active', index === 0);
+        imageSlider.appendChild(img);
+
+        const dot = document.createElement('div');
+        dot.classList.add('slider-dot');
+        dot.classList.toggle('active', index === 0);
+        dot.addEventListener('click', () => changeSlide(index));
+        sliderDots.appendChild(dot);
     });
 
-    // se nenhum evento for encontrado
-    if (events === "") {
-        events = `
-        <div class="no-event">
-            <h3>Sem Eventos</h3>
-        </div>`;
-    }
+    attendEventButton.disabled = event.attendance >= event.capacity;
 
-    eventsContainer.innerHTML = events;
-    // salva um evento quando updateEvents for chamado
-    saveEvents();
+    // Atualiza o Mapa
+    eventMap.setView([event.latitude, event.longitude], 13);
+    L.marker([event.latitude, event.longitude]).addTo(eventMap);
+
+    eventDetailsModal.style.display = 'block';
 }
 
-// função para adicionar eventos
-addEventSubmit.addEventListener("click", () => {
-    const eventTitle = addEventTitle.value;
-    const eventTimeFrom = addEventFrom.value;
-    const eventTimeTo = addEventTo.value;
+// Muda a imagem do slider
+function changeSlide(index) {
+    const images = document.querySelectorAll('#event-images-slider img');
+    const dots = document.querySelectorAll('#slider-dots .slider-dot');
 
-    // algumas validações
-    if (eventTitle === "" || eventTimeFrom === "" || eventTimeTo === "" || fileCount < 1) {
-        alert("Por favor, preencha todos os campos");
+    images.forEach((img, i) => {
+        img.classList.toggle('active', i === index);
+    });
+
+    dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+    });
+}
+
+// Cria um novo evento
+function createEvent(e) {
+    e.preventDefault();
+    const title = document.getElementById('event-title').value;
+    const date = document.getElementById('event-date').value;
+    const time = document.getElementById('event-time').value;
+    const institution = document.getElementById('event-institution').value;
+    const category = document.getElementById('event-category').value;
+    const description = document.getElementById('event-description').value;
+    const capacity = parseInt(document.getElementById('event-capacity').value);
+    const location = document.getElementById('event-location').value;
+    const contact = document.getElementById('event-contact').value;
+    const sponsors = document.getElementById('event-sponsors').value;
+    const imageFiles = document.getElementById('event-images').files;
+
+    if (imageFiles.length < 3 || imageFiles.length > 5) {
+        alert('Por favor, selecione de 3 a 5 imagens.');
         return;
     }
 
-    const timeFromArr = eventTimeFrom.split(":");
-    const timeToArr = eventTimeTo.split(":");
-
-    if (timeFromArr.length != 2 || timeToArr.length != 2 || timeFromArr[0] > 23 || timeFromArr[1] > 59 || timeToArr[0] > 23 || timeToArr[1] > 59) {
-        alert("Formato de Hora Inválido");
-        return;
-    }
-
-    const timeFrom = convertTime(eventTimeFrom);
-    const timeTo = convertTime(eventTimeTo);
-
-    const newEvent = {
-        title: eventTitle,
-        time: timeFrom + " - " + timeTo,
-    };
-
-    let eventAdded = false;
-    // verifica se eventsArr não está vazio
-    if (eventsArr.length > 0) {
-        // verifica se o dia ativo já tem um evento e adiciona a ele
-        eventsArr.forEach((item) => {
-            if (item.day === activeDay && item.month === month + 1 && item.year === year) {
-                item.events.push(newEvent);
-                eventAdded = true;
-            }
+    const imagePromises = Array.from(imageFiles).map(file => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => resolve(e.target.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
         });
+    });
+
+    Promise.all(imagePromises).then(images => {
+        const newEvent = {
+            id: Date.now().toString(),
+            title,
+            date,
+            time,
+            institution,
+            category,
+            description,
+            capacity,
+            attendance: 0,
+            images,
+            location,
+            contact,
+            sponsors,
+            latitude: marker.getLatLng().lat,
+            longitude: marker.getLatLng().lng
+        };
+
+        events.push(newEvent);
+        localStorage.setItem('events', JSON.stringify(events));
+        renderCalendar();
+        showEventsForDay(date);
+        eventModal.style.display = 'none';
+        eventForm.reset();
+    });
+}
+
+// Participar do evento
+function attendEvent() {
+    const event = events.find(e => e.id === selectedEventId);
+    if (event && event.attendance < event.capacity) {
+        event.attendance++;
+        localStorage.setItem('events', JSON.stringify(events));
+        showEventDetails(event);
     }
+}
 
-    // se eventsArr está vazio ou o dia ativo não possui eventos, cria um novo
-    if (!eventAdded) {
-        eventsArr.push({
-            day: activeDay,
-            month: month + 1,
-            year: year,
-            events: [newEvent],
-        });
-    }
+// Listeners do evento
+prevMonthButton.addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() - 1);
+    renderCalendar();
+});
 
-    // remove a classe 'active' do formulário de adicionar evento
-    addEventContainer.classList.remove('active');
-    // limpa os campos
-    addEventTitle.value = "";
-    addEventFrom.value = "";
-    addEventTo.value = "";
+nextMonthButton.addEventListener('click', () => {
+    currentDate.setMonth(currentDate.getMonth() + 1);
+    renderCalendar();
+});
 
-    // mostra o evento recém-adicionado
-    updateEvents(activeDay);
+newEventButton.addEventListener('click', () => {
+    eventModal.style.display = 'block';
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 100);
+});
 
-    // adiciona a classe 'event' para o novo evento criado (se não adicionado)
-    const activeDayElem = document.querySelector(".day.active");
-    if (!activeDayElem.classList.contains("event")) {
-        activeDayElem.classList.add("event");
+eventForm.addEventListener('submit', createEvent);
+
+attendEventButton.addEventListener('click', attendEvent);
+
+document.querySelectorAll('.close').forEach(closeButton => {
+    closeButton.addEventListener('click', () => {
+        eventModal.style.display = 'none';
+        eventDetailsModal.style.display = 'none';
+    });
+});
+
+window.addEventListener('click', (e) => {
+    if (e.target === eventModal || e.target === eventDetailsModal) {
+        eventModal.style.display = 'none';
+        eventDetailsModal.style.display = 'none';
     }
 });
 
-function convertTime(time) {
-    let timeArr = time.split(":");
-    let timeHour = timeArr[0];
-    let timeMin = timeArr[1];
-    let timeFormat = timeHour >= 12 ? "PM" : "AM";
-    timeHour = timeHour % 12 || 12;
-    time = timeHour + ":" + timeMin + " " + timeFormat;
-    return time;
-}
+searchBtn.addEventListener('click', () => {
+    const searchDate = dateSearch.value;
+    if (searchDate) {
+        currentDate = new Date(searchDate);
+        renderCalendar();
+        showEventsForDay(searchDate);
+    }
+});
 
-function openEventDialog(eventInfo) {
-    const dialog = document.getElementById('event-dialog');
-    const eventDetails = document.getElementById('event-details');
-    eventDetails.innerText = eventInfo;
-    dialog.style.display = 'block';
-
-    const closeBtn = document.getElementsByClassName('close-dialog')[0];
-    closeBtn.onclick = function () {
-        dialog.style.display = 'none';
-    };
-
-    window.onclick = function (event) {
-        if (event.target === dialog) {
-            dialog.style.display = 'none';
+// Preview da Imagem
+document.getElementById('event-images').addEventListener('change', function(e) {
+    const preview = document.getElementById('image-preview');
+    preview.innerHTML = '';
+    for (const file of e.target.files) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const img = document.createElement('img');
+            img.src = e.target.result;
+            preview.appendChild(img);
         }
-    };
-}
+        reader.readAs
 
-eventsContainer.addEventListener("click", (e) => {
-    if (e.target.classList.contains("event")) {
-        const eventInfo = e.target.innerText;
-        openEventDialog(eventInfo);
+DataURL(file);
     }
 });
 
-// armazenar eventos no histórico local
-function saveEvents() {
-    localStorage.setItem("events", JSON.stringify(eventsArr));
-}
+document.getElementById('event-images').addEventListener('change', function(e) {
+    const preview = document.getElementById('image-preview');
+    preview.innerHTML = '';
+    const files = e.target.files;
 
-function getEvents() {
-    if (localStorage.getItem("events") === null) {
+    if (files.length < 3 || files.length > 5) {
+        alert('Por favor, selecione de 3 a 5 imagens.');
+        e.target.value = ''; // Limpa o input
         return;
     }
-    eventsArr.push(...JSON.parse(localStorage.getItem("events")));
-}
 
+    for (const file of files) {
+        if (file.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.classList.add('preview-image');
+                preview.appendChild(img);
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+});
+
+// Inicializa
+initMaps();
+renderCalendar();
+showEventsForDay(new Date().toISOString().split('T')[0]);
+
+// Add default events if there are no events
+if (events.length === 0) {
+    const defaultEvents = [
+        {
+            id: '1',
+            title: 'Campanha de Vacinação',
+            date: '2023-09-15',
+            time: '09:00',
+            institution: 'Hospital Municipal',
+            category: 'Saúde',
+            description: 'Campanha de vacinação contra a gripe para idosos e crianças.',
+            capacity: 100,
+            attendance: 0,
+            images: ['/placeholder.svg?height=300&width=400'],
+            location: 'Praça Central, Vitória - ES',
+            contact: '(27) 3333-4444',
+            sponsors: 'Prefeitura de Vitória',
+            latitude: -20.2976,
+            longitude: -40.2958
+        },
+        {
+            id: '2',
+            title: 'Plantio de Árvores',
+            date: '2023-09-22',
+            time: '10:00',
+            institution: 'Secretaria do Meio Ambiente',
+            category: 'Meio Ambiente',
+            description: 'Ação de plantio de árvores no Parque Moscoso.',
+            capacity: 50,
+            attendance: 0,
+            images: ['/placeholder.svg?height=300&width=400'],
+            location: 'Parque Moscoso, Vitória - ES',
+            contact: '(27) 3333-5555',
+            sponsors: 'Empresa Verde Ltda.',
+            latitude: -20.3195,
+            longitude: -40.3364
+        },
+        {
+            id: '3',
+            title: 'Aula de Música para Crianças',
+            date: '2023-09-30',
+            time: '14:00',
+            institution: 'Escola de Música Harmonia',
+            category: 'Cultura',
+            description: 'Aulas gratuitas de música para crianças de comunidades carentes.',
+            capacity: 30,
+            attendance: 0,
+            images: ['/placeholder.svg?height=300&width=400'],
+            location: 'Centro Cultural Carmélia, Vitória - ES',
+            contact: '(27) 3333-6666',
+            sponsors: 'Instituto Cultural ABC',
+            latitude: -20.3119,
+            longitude: -40.2968
+        }
+    ];
+
+    events = defaultEvents;
+    localStorage.setItem('events', JSON.stringify(events));
+    renderCalendar();
+}

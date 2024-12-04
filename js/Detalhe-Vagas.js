@@ -30,3 +30,5 @@ document.addEventListener('DOMContentLoaded', () => {
         displayDiv.innerHTML = `<p>Dados da vaga não encontrados.</p>`;
     }
 });
+
+htmlspecialchars($vaga['data'])

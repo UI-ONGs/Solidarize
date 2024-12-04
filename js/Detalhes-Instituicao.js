@@ -1,197 +1,153 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // Recupera os dados do sessionStorage
-    const storedOng = sessionStorage.getItem('selectedOng');
-    let ongData;
+// ID GENERALIZADO - MUDAR PARA MÉTODO NECESSÁRIO
+const idInstituicao = 1;
 
-    if (storedOng) {
-        ongData = JSON.parse(storedOng);
+document.addEventListener("DOMContentLoaded", function () {
+    // =================== EventListeners
+    // Obtém todos os elementos que representam as estrelas
+    const stars = document.querySelectorAll(".star");
+    // Obtém o elemento onde será mostrado o número de estrelas selecionadas
+    const ratingValue = document.getElementById("rating-value");
 
-        // Função para atualizar os elementos da página com os dados da ONG
-        function updateOngDetails() {
-            document.getElementById('nome-ong').textContent = ongData.nome || 'Nome não disponível';
-            document.getElementById('categoria-ong').textContent = ongData.categoria || 'Categoria não disponível';
-            document.getElementById('descricao-ong').textContent = ongData.descricao || 'Descrição não disponível';
-            document.getElementById('endereco-ong').textContent = ongData.endereco || 'Endereço não disponível';
-            document.getElementById('instagram-link').href = ongData.contato.instagram || '#';
-            document.getElementById('facebook-link').href = ongData.contato.facebook || '#';
-            document.getElementById('telefone-link').href = ongData.contato.telefone ? `tel:${ongData.telefone}` : '#';
-            document.getElementById('email-link').href = ongData.contato.email ? `mailto:${ongData.email}` : '#';
-        }
+    // Adiciona um ouvinte de evento para cada estrela
+    stars.forEach((star, index) => {
+        // Quando o mouse passar sobre a estrela, destacar as estrelas até a posição atual
+        star.addEventListener("mouseover", function () {
+            resetStars(); // Reseta as estrelas para o estado padrão
+            highlightStars(index + 1); // Destaca as estrelas até o índice da estrela sobre a qual o mouse está
+        });
 
-        updateOngDetails();
-    } else {
-        console.error('Dados da ONG não encontrados no sessionStorage');
-        document.querySelector('.card').innerHTML = '<p class="error-message">Informações da ONG não encontradas ou incompletas.</p>';
-    }
-});
+        // Quando o mouse sair de cima da estrela, restaurar o estado das estrelas
+        star.addEventListener("mouseout", function () {
+            resetStars(); // Reseta as estrelas para o estado padrão
+            highlightStars(getSelectedRating()); // Mantém o destaque da avaliação que foi selecionada
+        });
 
-// Aguarda até que o DOM esteja totalmente carregado para executar o script
-document.addEventListener('DOMContentLoaded', () => {
-    // Obtém referências para os elementos do DOM
-    const commentsContainer = document.getElementById('commentsContainer');
-    const sortRecentButton = document.getElementById('sortRecent');
-    const sortLikedButton = document.getElementById('sortLiked');
-    const commentForm = document.getElementById('commentForm');
-    const nameInput = localStorage.getItem("username");
-    console.log(nameInput);
-    const commentInput = document.getElementById('comment');
-    const commentsModal = document.getElementById('commentsModal');
-    const openCommentsButton = document.getElementById('openComments');
-    const closeCommentsButton = document.getElementById('closeComments');
+        // Quando o usuário clica na estrela, define a avaliação
+        star.addEventListener("click", function () {
+            setSelectedRating(index + 1); // Define o número de estrelas como a avaliação do usuário
+        });
+    });
 
-    // Comentários padrão pré-definidos
-    const defaultComments = [
-        {
-            name: "Malu",
-            text: "Ótima iniciativa! Admiro muito o trabalho que vocês fazem pela comunidade.",
-            likes: 5,
-            date: new Date('2024-06-16T12:30:00')
-        },
-        {
-            name: "Dani",
-            text: "Essa ONG merece todo o reconhecimento pelo trabalho excepcional que realiza. Continuem assim!",
-            likes: 3,
-            date: new Date('2024-06-17T09:00:00')
-        },
-        {
-            name: "Isa",
-            text: "Essa ONG é incrível! Eles estão fazendo a diferença na vida das pessoas que mais precisam.",
-            likes: 8,
-            date: new Date('2023-06-18T14:45:00')
-        },
-        {
-            name: "Guilerme",
-            text: "É tão inspirador ver o esforço dessas pessoas em ajudar os outros. Estou feliz por apoiar essa causa.",
-            likes: 21,
-            date: new Date('2024-06-14T13:30:00')
-        }
-    ];
-
-    // Função para carregar os comentários
-    function loadComments() {
-        // Obtém os comentários salvos no armazenamento local
-        const comments = JSON.parse(localStorage.getItem('comments'));
-         // Se não houver comentários salvos, usa os comentários padrão e salva no armazenamento local
-        if (comments === null) {
-            saveComments(defaultComments);
-            // Converte as datas dos comentários para objetos Date
-            return defaultComments.map(comment => ({
-                ...comment,
-                date: new Date(comment.date)
-            }));
-        }
-        // Converte as datas dos comentários para objetos Date
-        return comments.map(comment => ({
-            ...comment,
-            date: new Date(comment.date)
-        }));
-    }
-
-    // Função para salvar os comentários no armazenamento local
-    function saveComments(comments) {
-        localStorage.setItem('comments', JSON.stringify(comments));
-    }
-
-    // Função para exibir os comentários na página
-    function displayComments(comments) {
-         // Limpa o conteúdo anterior do contêiner de comentários
-        commentsContainer.innerHTML = '';
-        // Itera sobre os comentários e os adiciona ao contêiner
-        comments.forEach(comment => {
-            // Cria elementos HTML para cada comentário e suas propriedades
-            const commentDiv = document.createElement('div');
-            commentDiv.classList.add('comment');
-
-            const authorDiv = document.createElement('div');
-            authorDiv.classList.add('author');
-            authorDiv.textContent = comment.name;
-
-            const dateDiv = document.createElement('div');
-            dateDiv.classList.add('date');
-            dateDiv.textContent = comment.date.toLocaleString();
-
-            const textDiv = document.createElement('div');
-            textDiv.classList.add('text');
-            textDiv.textContent = comment.text;
-
-            const likesDiv = document.createElement('div');
-            likesDiv.classList.add('likes');
-            likesDiv.textContent = `Likes: ${comment.likes}`;
-
-            commentDiv.appendChild(authorDiv);
-            commentDiv.appendChild(dateDiv);
-            commentDiv.appendChild(textDiv);
-            commentDiv.appendChild(likesDiv);
-
-            commentsContainer.appendChild(commentDiv);
+    // =================== Functions
+    
+    // Função que destaca as estrelas até o número passado como argumento
+    function highlightStars(count) {
+        stars.forEach((star, index) => {
+            if (index < count) {
+                star.classList.add("selected"); // Adiciona a classe 'selected' para destacar a estrela
+            }
         });
     }
 
-    function addComment(name, text) {
-        // Verifica se o nome do usuário está logado
-        if (!name) {
-            alert("Por favor, faça login para comentar!");
-            return;
-        }
-        // Carrega os comentários existentes
-        const comments = loadComments();
-        // Cria um novo comentário
-        const newComment = {
-            name: name,
-            text: text,
-            likes: 0,
-            date: new Date()
-        };
-         // Adiciona o novo comentário à lista de comentários
-        comments.unshift(newComment);
-        saveComments(comments);
-        displayComments(comments);
+    // Função que reseta as estrelas, removendo a classe 'selected'
+    function resetStars() {
+        stars.forEach(star => {
+            star.classList.remove("selected"); // Remove a classe 'selected' de todas as estrelas
+        });
     }
 
-     // Adiciona um evento de clique para ordenar os comentários por data (mais recentes primeiro)
-    sortRecentButton.addEventListener('click', () => {
-        const comments = loadComments();
-        // Ordena os comentários por data
-        const sortedComments = comments.sort((a, b) => b.date - a.date);
-        displayComments(sortedComments);
-    });
+    // Função que armazena a avaliação selecionada no localStorage
+    function setSelectedRating(rating) {
+        localStorage.setItem("rating", rating); // Salva a avaliação no localStorage (para persistir após o recarregamento)
+        ratingValue.textContent = rating; // Atualiza a exibição da avaliação selecionada
+    }
 
-     // Adiciona um evento de clique para ordenar os comentários por número de likes (mais curtidos primeiro)
-    sortLikedButton.addEventListener('click', () => {
-        const comments = loadComments();
-          // Ordena os comentários por número de likes
-        const sortedComments = comments.sort((a, b) => b.likes - a.likes);
-        displayComments(sortedComments);
-    });
-
-     // Adiciona um evento de envio para o formulário de comentários
-    commentForm.addEventListener('submit', (event) => {
-        // Impede o comportamento padrão de recarregar a página ao enviar o formulário
-        event.preventDefault();
-        const text = commentInput.value;
-        // Adiciona o comentário com o nome do usuário atual
-        addComment(nameInput, text);
-        commentInput.value = '';
-    });
-
-     // Adiciona um evento de clique para abrir o modal de comentários
-    openCommentsButton.addEventListener('click', () => {
-        commentsModal.showModal();
-    });
-
-     // Adiciona um evento de clique para fechar o modal de comentários
-    closeCommentsButton.addEventListener('click', () => {
-        commentsModal.close();
-    });
-
-    // Fechar modal ao clicar fora do container
-    commentsModal.addEventListener('click', (event) => {
-        if (event.target === commentsModal) {
-            commentsModal.close();
-        }
-    });
-
-    // Exibe os comentários inicialmente ordenados por data (mais recentes primeiro)
-    const initialSortedComments = loadComments().sort((a, b) => b.date - a.date);
-    displayComments(initialSortedComments);
+    // Função que recupera a avaliação salva (se houver) no localStorage
+    function getSelectedRating() {
+        const savedRating = localStorage.getItem("rating"); // Tenta obter o valor da avaliação salva
+        return savedRating ? parseInt(savedRating) : 0; // Retorna a avaliação salva ou 0 se não houver avaliação
+    }
+ 
+    // ================ Call functions
+    // Inicializa a página com a avaliação salva, caso haja uma
+    highlightStars(getSelectedRating()); // Chama a função para destacar as estrelas com base na avaliação salva
 });
+
+
+let currentIndex = 0;
+
+function moveSlide(step) {
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+
+    currentIndex = (currentIndex + step + totalSlides) % totalSlides;
+    const newTransform = -currentIndex * 100 + '%';
+    document.querySelector('.slider').style.transform = `translateX(${newTransform})`;
+}
+
+// =================== Evento
+fetchDataEventos();
+const elementoPai = document.querySelector('.slider-event');
+
+// Functions
+async function fetchDataEventos() {
+    try {
+        const formData = new FormData();
+        formData.append('id', idInstituicao);
+
+        const response = await fetch('php/requestEventos.php', {
+            method: 'POST',
+            body: formData
+        });
+        if (!response.ok) {
+            throw new Error('Network response deu merda');
+        }
+        const data = await response.json();
+
+        // Cria Card de evento
+        data.forEach(e => adicionaEvento(e['titulo'], e['data_inicio'], e['data_fim']));
+    
+    } catch (error) {
+        console.error('Fetch error:', error);
+    }
+}
+
+async function adicionaEvento(tituloE, horaInicioE, horaFimE){
+    let horaInicioE2 = horaInicioE.split(" ")[1];
+    let horaFimE2 = horaFimE.split(" ")[1];
+    let [ano, mes, dia] = horaInicioE.split("-");
+    dia = dia.split(' ')[0];
+
+    let cadEvento = document.createElement('div');
+    const modEvento = `
+    <div class="event">
+        <h3>${tituloE}</h3>
+        <p>Data: ${dia}/${mes}/${ano}</p>
+        <p>Horário: ${horaInicioE2.split(':')[0]}:${horaInicioE2.split(':')[1]}  
+        às ${horaFimE2.split(':')[0]}:${horaFimE2.split(':')[1]}</p>
+        <a href="#">Ir para o Calendário</a>
+    </div>`;
+
+    cadEvento.innerHTML = modEvento;
+
+    elementoPai.appendChild(cadEvento);
+
+}
+
+
+// =================== Dados da instituição
+const titulo = document.getElementById('nome_instituicao');
+const descricao = document.getElementById('descricao_instituicao');
+const missao = document.getElementById('missao');
+const visao = document.getElementById('visao');
+const valores = document.getElementById('valores');
+
+// Functions
+async function fetchDataInst() {
+    try {
+        const response = await fetch('php/requestInstituicao.php');
+        if (!response.ok) {
+            throw new Error('Network response deu merda');
+        }
+        const data = await response.json();
+
+        titulo.textContent = data[idInstituicao-1]['nome'];
+        descricao.textContent = data[idInstituicao-1]['descricao'];
+        missao.textContent = data[idInstituicao-1]['missao'];
+        visao.textContent = data[idInstituicao-1]['visao'];
+        valores.textContent = data[idInstituicao-1]['valores'];
+    } catch (error) {
+        console.error('Fetch error:', error);
+    }
+}
+fetchDataInst();

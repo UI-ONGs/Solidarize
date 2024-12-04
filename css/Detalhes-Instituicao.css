@@ -1,236 +1,425 @@
-/* Importa a fonte 'Poppins' do Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,90;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,90;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-/* Define estilos gerais para todos os elementos */
-* {
+*{
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Define estilos específicos para o corpo do documento */
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f6f6f6;
+body{
+    background-color: #d1fae5;
+    margin-left: 3.5em;
 }
 
-/* Define estilos para o card */
 .card {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    width: 43.75rem;
-    padding: 1.563rem;
-    background-color: #45736A;
-    text-align: justify;
-    box-shadow: 10px 10px 10px #243d38;
-    border-radius: 0.313rem;
-}
-
-/* Define estilos para um ícone */
-.icon {
-    margin-top: 1.875rem;
-    margin-bottom: 1.875rem;
-    display: flex;
-    justify-content: center;
-}
-
-/* Define estilos para uma imagem dentro do ícone */
-.icon img {
-    width: 21.875rem;
-}
-
-/* Define estilos para o conteúdo da descrição */
-.description_content {
-    padding: 0.938rem;
-    margin-top: 1.875rem;
-    background-color: #f6f6f6;
-    text-align: justify;
-    border-radius: 0.313rem;
-}
-
-/* Define estilos para o endereço */
-.endereco {
-    padding: 0.938rem;
-    margin-top: 1.875rem;
-    margin-bottom: 1.875rem;
-    background-color: #f6f6f6;
-    border-radius: 0.313rem;
-}
-
-/* Define estilos para informações de contato */
-.contato {
-    padding: 0.938rem;
-    margin-bottom: 1.875rem;
-    background-color: #f6f6f6;
-    border-radius: 0.313rem;
-}
-
-.link{
-    display: flex;
-    justify-content: space-evenly;
-}
-
-/* Define estilos para os links */
-a {
-    text-decoration: none;
-    color: black;
-    font-size: 1.25rem;
-}
-
-/* Define estilos para os elementos com IDs 'categoria-ong' e 'nome-ong' */
-#categoria-ong, #nome-ong {
-    color: #fff;
-}
-
-/* Estilo para a área principal do conteúdo */
-.main-container {
-    text-align: center;
-}
-
-/* Estilo para botões */
-button {
-    padding: 10px 15px;
-    margin: 0.313rem;
-    border: none;
-    background-color: #243d38;
-    color: white;
-    cursor: pointer;
-    border-radius: 0.313rem;
-}
-
-/* Estilo para botões de classificação */
-#sortRecent, #sortLiked{
-    background-color: transparent;
-    color: #243d38;
-    font-size: 1rem;
-    font-weight: 500;
-}
-
-#sortRecent:hover, #sortLiked:hover{
-    color: #45736A;
-}
-
-/* Estilo para o plano de fundo do diálogo */
-dialog::backdrop {
-    background: rgba(0, 0, 0, 0.5);
-}
-
-/* Estilo para o contêiner principal */
-.container {
-    width: 37.5rem;
+    width: 80vw;
     margin: 0 auto;
-    background: white;
-    padding: 1.25rem;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 0.625rem;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    height: 80vh;
 }
 
-/* Estilo para o título */
-h1 {
-    text-align: center;
-}
-
-/* Estilo para os controles */
-.controls {
-    text-align: center;
-    margin-bottom: 1.25rem;
-}
-
-/* Estilo para o modal de comentários */
-#commentsModal {
-    margin: auto;
-    max-width: 40.625rem;
-    max-height: 46.875rem;
+.profile{
+    background-color: #ecfdf5;
+    border-radius: 1em;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 3em;
+    margin-bottom: 1em;
     overflow: hidden;
 }
 
-/* Estilo para o contêiner de comentários */
-#commentsContainer {
-    flex-grow: 1;
-    overflow-y: auto;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 1.25rem;
+.capa {
+    overflow: hidden;
+    height: 12em;
 }
 
-/* Estilo para comentários individuais */
-.comment {
-    border-bottom: 1px solid #ddd;
-    padding: 0.625rem 1rem;
-}
-
-.comment .author {
-    font-weight: bold;
-}
-
-.comment .date {
-    font-size: 0.9em;
-    color: #666;
-}
-
-.comment .text {
-    margin: 0.313rem 0;
-}
-
-.comment .likes {
-    color: #45736A;
-    cursor: pointer;
-}
-
-/* Estilo para o formulário de comentários */
-#commentForm {
-    display: flex;
-    flex-direction: column;
-    padding-top: 0.625rem;
-}
-
-#commentForm input {
-    width: calc(100% - 50px);
-    padding: 0.625rem;
-    border-radius: 0.313rem;
-    border: 1px solid #ccc;
-    display: inline-block;
-    vertical-align: middle;
-}
-
-.comment-input-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+.capa img {
     width: 100%;
 }
 
-.send-button {
-    background-color: transparent;
-    color: #243d38;
-    font-size: 1.25rem;
-    padding: 0.313rem;
-}
-
-.send-button:hover {
-    color: #45736A;
-}
-
-.close-button {
+.perfil {
+    border-radius: 50%;
+    width: 12em;
+    height: 12em;
     position: absolute;
-    right: 0.625rem;
-    top: 0.625rem;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #243d38;
+    top: 10em;
 }
 
-.close-button:hover {
-    color: #c82333;
+.perfil img {
+    width: 100%;
+}
+
+/*Estilização do card de perfil*/
+
+.info-instituicao{
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content:flex-end;
+}
+
+.desc1{
+    padding: 10px;
+    word-break: break-word;
+    width: 75%;
+}
+
+.desc1 h1{
+    text-align: center;
+}
+
+/*Estilização dos icones*/
+.icones {
+    display: flex;
+    flex-direction: column;
+    
+}
+
+.cont-icon {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.fa {
+    padding: 0.8rem;
+    font-size: 1.5rem;
+    text-decoration: none;
+    border-radius: 20%;
+    align-items: center;
+    margin: 5px;
+}
+
+.fa-facebook {
+    background: lightblue;
+    color: white;
+}
+
+
+.fa-whatsapp {
+    background: lightgreen;
+    color: white;
+}
+
+
+.fa-instagram {
+    background: lightcoral;
+    color: white;
+}
+
+.material-symbols-outlined {
+    padding: 0.8rem;
+    font-size: 1.5rem;
+    text-decoration: none;
+    border-radius: 20%;
+    align-items: center;
+    margin: 5px;
+    background: yellow;
+    color: white;
+}
+
+.colaboradores{
+    background-color: #ecfdf5;
+    border-radius: 1em;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1em;
+    padding: 20px;
+    word-break: break-word;
+    text-align: center;
+    
+}
+
+.slider-colab{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    padding: 1em;
+    overflow-x: auto;
+    gap: 1em;
+}
+
+.colab img{
+    border-radius: 50%;
+    width: 8em;
+    height: 8em;
+}
+
+
+.detalhes{
+    background-color: #ecfdf5;
+    border-radius: 1em;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1em;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    gap: 5em;
+    
+}
+
+.slider-container {
+    width: 50%;
+    height: 70%;
+    overflow: hidden;
+    position: relative;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.slider {
+    display: flex;
+    transition: transform 0.5s ease;
+}
+
+.slide {
+    min-width: 100%;
+    height: 25em;
+    object-fit: cover;
+}
+
+.controls {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+}
+
+.prev, .next {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.prev:hover, .next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.desc2{
+    padding: 10px;
+    word-break: break-word;
+    text-align: center;
+
+    width: 50%;
+}
+
+/*Estilização da div de localizacao*/
+.localizacao {
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-evenly;
+    width: 80vw;
+    background-color: #ecfdf5;
+    border-radius: 1em;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    margin-bottom: 1em;
+}
+
+.desc3 {
+    padding: 20px;
+    text-align: justify;
+    word-break: break-word;
+}
+
+.desc3 h1 {
+    margin-bottom: 10px;
+}
+
+.desc3 p {
+    color: #666;
+    font-size: 16px;
+}
+
+/* Estilização da div com a imagem */
+.map {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+}
+
+.map img {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    border-radius: 1em;
+}
+
+/* Link abaixo da imagem */
+.map a {
+    text-align: center;
+    display: block;
+    margin-top: 10px;
+    color: #3b6fff;
+    text-decoration: none;
+    font-size: 16px;
+}
+
+.map a:hover {
+    text-decoration: underline;
+}
+
+
+
+.eventos{
+    margin-bottom: 1em;
+    padding: 20px;
+    background-color: #ecfdf5;
+    border-radius: 1em;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.eventos h1{
+    margin-bottom: 0.8em;
+}
+
+.eventos h4{
+    margin-left: 2em;
+}
+
+.eventos p{
+    margin-bottom: 0.5em;
+}
+
+.slider-event{
+    display: flex;
+    flex-direction: row;
+    overflow-y: auto;
+    padding: 20px;
+    
+}
+
+.event{
+    padding: 20px;
+    background-color: #b6edd6;
+    border-radius: 1em;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+   
+}
+
+.event a{
+    color: #3b6fff;
+}
+
+.avaliacao{
+    margin-bottom: 1em;
+    padding: 20px;
+    background-color: #ecfdf5;
+    border-radius: 1em;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: row;
+    gap: 4em;
+    justify-content: flex-start;
+    
+}
+
+
+.rating {
+    display: flex;
+    font-size: 2em;
+    color: #ccc;
+}
+
+.star {
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.star:hover,
+.star.selected {
+    color: gold;
+} 
+
+/* Responsividade */
+@media (max-width: 768px) {
+    body{
+        margin-left: 0;
+    }
+
+    .capa img{
+        height: 100%;
+    }
+
+    .card{
+        margin-top: 7em;
+    }
+
+    .profile{
+       justify-content: center;
+    }
+
+    .perfil{
+        margin-top: 3em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 83.38%;
+    }
+    .perfil img{
+        /* width: 50%; */
+        scale: .35;
+    }
+
+    .info-instituicao{
+        flex-direction: column;
+        align-items: center;
+        text-align: end;
+        gap: 1em;
+    }
+
+    .desc1{
+        margin-top: 4em;
+        text-align: center;
+    }
+    
+    .icones {
+        flex-direction: row;
+        justify-content: space-evenly;
+        gap: 1em;
+    }
+
+    .detalhes{
+        flex-direction: column;
+        justify-content: center;
+        gap: 1.5em;
+    }
+
+    .slider-container{
+        width: 100%;
+    }
+
+    .desc2{
+        width: 100%;
+    }
+
+    .localizacao {
+        flex-direction: column; /* Coloca as divs em coluna em telas menores */
+    }
+
+    .desc3{
+        text-align: center;
+    }
+    .desc2,
+    .map {
+        flex: none;
+        width: 100%;
+    }
+
+    .eventos h1{
+        text-align: center;
+    }
+
+    .avaliacao{
+        flex-direction: column;
+        gap: 0;
+        align-items: center;
+    }
 }
