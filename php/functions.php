@@ -64,7 +64,8 @@ function registerUser($userData, $userType) {
                 NOW(), 'ATIVO', NOW(), NOW()
             )
         ");
-
+        
+        // sanitiza e valida o email
         $email = filter_var($userData['email'], FILTER_SANITIZE_EMAIL);
         $email = filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : '';
         

@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
 
-    // Filtro de validação
+    // Filtro de validação e sanitização
     $email = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
     $email = filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : '';
     $password = $data['password'] ?? '';
