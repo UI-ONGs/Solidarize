@@ -15,13 +15,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Whitelist allowed fields to prevent SQL injection
+    // valida os campos para impedir injeções
     $allowedFields = ['username', 'email', 'cnpj'];
     if (!in_array($field, $allowedFields)) {
         echo json_encode(['isUnique' => false, 'message' => 'Campo inválido']);
         exit;
     }
 
+    // verifica se os valores são únicos
     try {
         if ($field === 'cnpj') {
             $stmt = $pdo->prepare("SELECT COUNT(*) FROM INSTITUICAO WHERE cnpj = :value");

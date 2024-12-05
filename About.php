@@ -198,5 +198,6 @@
     <?php include 'Footer.php'; ?>
 
     <script src="js/About.js"></script>
+    <script src="js/NavBar.js"></script>
 </body>
 </html>

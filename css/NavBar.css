@@ -1,5 +1,7 @@
+/* Importa a fonte "Poppins" do Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
+/* Reset de estilos e definição da fonte padrão */
 * {
     margin: 0;
     padding: 0;
@@ -11,6 +13,7 @@
     font-family: "Poppins", sans-serif;
 }
 
+/* Variáveis de CSS para cores e transições */
 :root {
     --primary-color: #4A7B78;
     --secondary-color: #6DA0A6;
@@ -22,11 +25,12 @@
     --transition: all 0.3s ease;
 }
 
+/* Estilos da barra de navegação (navbar) */
 .navbar {
     position: fixed;
     top: 0;
     left: 0;
-    width: 60px;
+    width: 3.75rem;
     height: 100vh;
     background-color: var(--primary-color);
     color: var(--white);
@@ -39,20 +43,22 @@
     overflow-y: hidden;
 }
 
+/* Expande a navbar ao passar o mouse */
 .navbar:hover {
-    width: 250px;
+    width: 15.625rem;
 }
 
+/* Estilos do logotipo da navbar */
 .navbar-logo {
     display: flex;
     align-items: center;
-    padding: 0 0.5rem;
+    padding: 0 .5rem;
     margin-bottom: 2rem;
 }
 
 .navbar-logo img {
-    width: 40px;
-    height: 40px;
+    width: 2.5rem;
+    height: 2.5rem;
     margin-right: 1rem;
 }
 
@@ -64,10 +70,12 @@
     transition: opacity 0.3s ease;
 }
 
+/* Torna o texto do logotipo visível quando a navbar está expandida */
 .navbar:hover .navbar-logo-text {
     opacity: 1;
 }
 
+/* Estilos do menu da navbar */
 .navbar-menu {
     list-style-type: none;
     padding: 0;
@@ -76,26 +84,27 @@
 }
 
 .navbar-menu li {
-    margin-bottom: 0.5rem;
-    width: 250px;
+    margin-bottom: .5rem;
+    width: 15.625rem;
 }
 
 .navbar-menu a {
     display: flex;
     align-items: center;
     color: var(--white);
-    padding: 0.5rem 0.5rem;
-    border-radius: 0 25px 25px 0;
+    padding: .5rem .5rem;
+    border-radius: 0 1.5625rem 1.5625rem 0;
     transition: var(--transition);
 }
 
+/* Estilos dos links do menu da navbar ao passar o mouse e quando ativo */
 .navbar-menu a:hover, .navbar-menu a.active {
     background-color: var(--secondary-color);
 }
 
 .navbar-menu a i {
     font-size: 1.2rem;
-    width: 40px;
+    width: 2.5rem;
     text-align: center;
 }
 
@@ -105,10 +114,12 @@
     transition: opacity 0.3s ease;
 }
 
+/* Torna o texto dos links visível quando a navbar está expandida */
 .navbar:hover .navbar-menu a span {
     opacity: 1;
 }
 
+/* Estilos do usuário na navbar */
 .navbar-user {
     margin-top: auto;
     padding: 1rem;
@@ -118,22 +129,24 @@
     transition: opacity 0.3s ease;
 }
 
+/* Torna as informações do usuário visíveis quando a navbar está expandida */
 .navbar:hover .navbar-user {
     opacity: 1;
 }
 
 .navbar-user-avatar {
-    width: 40px;
-    height: 40px;
+    width: 2.5rem;
+    height: 2.5rem;
     border-radius: 50%;
     margin-right: 1rem;
 }
 
 .navbar-user-name {
     white-space: nowrap;
-    font-size: 0.9rem;
+    font-size: .9rem;
 }
 
+/* Estilos para a navbar mobile (visível em dispositivos mobile) */
 .navbar-mobile {
     display: none;
     position: fixed;
@@ -144,6 +157,7 @@
     z-index: 1000;
 }
 
+/* Cabeçalho da navbar mobile */
 .navbar-mobile-header {
     display: flex;
     justify-content: space-between;
@@ -152,23 +166,24 @@
 }
 
 .navbar-mobile-logo {
-    height: 40px;
+    height: 2.5rem;
 }
 
+/* Botão de alternância da navbar mobile */
 .navbar-mobile-toggle {
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
-    width: 30px;
-    height: 20px;
+    width: 1.875rem;
+    height: 1.25rem;
     position: relative;
 }
 
 .navbar-mobile-toggle span {
     display: block;
     width: 100%;
-    height: 2px;
+    height: .125rem;
     background-color: var(--white);
     position: absolute;
     transition: all 0.3s ease;
@@ -179,16 +194,17 @@
 }
 
 .navbar-mobile-toggle span:nth-child(2) {
-    top: 9px;
+    top: .5625rem;
 }
 
 .navbar-mobile-toggle span:last-child {
     bottom: 0;
 }
 
+/* Animação do botão de alternância da navbar mobile quando ativo */
 .navbar-mobile-toggle.active span:first-child {
     transform: rotate(45deg);
-    top: 9px;
+    top: .5625rem;
 }
 
 .navbar-mobile-toggle.active span:nth-child(2) {
@@ -197,9 +213,10 @@
 
 .navbar-mobile-toggle.active span:last-child {
     transform: rotate(-45deg);
-    bottom: 9px;
+    bottom: .5625rem;
 }
 
+/* Menu da navbar mobile */
 .navbar-mobile-menu {
     display: none;
     list-style-type: none;
@@ -207,17 +224,19 @@
     margin: 0;
 }
 
+/* Torna o menu visível quando ativo */
 .navbar-mobile-menu.active {
     display: block;
 }
 
+/* Estilos dos links do menu da navbar mobile */
 .navbar-mobile-menu li a {
     display: flex;
     align-items: center;
     padding: 1rem;
     color: var(--white);
     text-decoration: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: .0625rem solid rgba(255, 255, 255, 0.1);
 }
 
 .navbar-mobile-menu li a i {
@@ -225,7 +244,8 @@
     font-size: 1.2rem;
 }
 
-@media (max-width: 768px) {
+/* Estilos responsivos para telas menores que 48rem */
+@media (max-width: 48rem) {
     .navbar {
         display: none;
     }
@@ -235,6 +255,6 @@
     }
 
     .content {
-        margin-top: 60px;
+        margin-top: 3.75rem;
     }
 }

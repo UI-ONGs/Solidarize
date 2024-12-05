@@ -4,10 +4,10 @@ require_once 'php/config.php';
 require_once 'php/functions.php';
 require_once 'php/check_auth.php';
 
-// Check if the user should be here
+// Checa se o usuário já não está logado
 requireGuest();
 
-// Fetch categories and needs for the registration forms
+// pega as catgorias e necessidades do banco
 $categorias = getCategorias();
 $necessidades = getNecessidades();
 
@@ -26,6 +26,7 @@ $necessidades = getNecessidades();
 <body>
     <div class="container">
         <main>
+            <!-- container de login -->
             <section id="login-section" class="active">
                 <div class="logo">
                     <i class="fas fa-hands-helping"></i>
@@ -50,6 +51,7 @@ $necessidades = getNecessidades();
                 <p class="forgot-password"><a href="#" id="show-forgot-password">Esqueceu sua senha?</a></p>
             </section>
 
+            <!-- container esqueceu senha -->
             <section id="forgot-password-section">
                 <div class="top-form">
                     <button class="back-button"><i class="fas fa-arrow-left"></i></button>
@@ -63,7 +65,7 @@ $necessidades = getNecessidades();
                     <button type="submit">Enviar link de recuperação</button>
                 </form>
             </section>
-
+            <!-- container para tipo de cadastro -->
             <section id="register-type-section">
                 <h2>Cadastro</h2>
                 <p>Você é um voluntário ou uma instituição?</p>
@@ -73,6 +75,7 @@ $necessidades = getNecessidades();
                 </div>
             </section>
 
+            <!-- sessão formulário para voluntário - 1 -->
             <section id="volunteer-register-section-1">
                 <div class="top-form">
                     <button class="back-button"><i class="fas fa-arrow-left"></i></button>
@@ -115,6 +118,7 @@ $necessidades = getNecessidades();
                 </form>
             </section>
 
+            <!-- sessão formulário para voluntário - 2 -->
             <section id="volunteer-register-section-2">
                 <div class="top-form">
                     <button class="back-button"><i class="fas fa-arrow-left"></i></button>
@@ -144,6 +148,7 @@ $necessidades = getNecessidades();
                 </form>
             </section>
 
+            <!-- sessão formulário para instituição - 1 -->
             <section id="institution-register-section-1">
                 <div class="top-form">
                     <button class="back-button"><i class="fas fa-arrow-left"></i></button>
@@ -158,6 +163,7 @@ $necessidades = getNecessidades();
                         <div class="multiselect" id="multiselect-category">
                             <div class="multiselect-toggle" >Selecione as categorias</div>
                             <div class="multiselect-dropdown">
+                                <!-- coloca as categorias no multiselect -->
                                 <?php foreach ($categorias as $categoria): ?>
                                     <label class="multiselect-option">
                                         <input type="checkbox" value="<?php echo htmlspecialchars($categoria['id']); ?>">
@@ -198,6 +204,7 @@ $necessidades = getNecessidades();
                 </form>
             </section>
 
+            <!-- sessão formulário para instituição - 2 -->
             <section id="institution-register-section-2">
                 <div class="top-form">
                     <button class="back-button"><i class="fas fa-arrow-left"></i></button>
@@ -208,6 +215,7 @@ $necessidades = getNecessidades();
                         <div class="multiselect" id="multiselect-donation">
                             <div class="multiselect-toggle" >Selecione tipos de doação</div>
                             <div class="multiselect-dropdown">
+                                <!-- coloca as necessidades no multiselect -->
                                 <?php foreach ($necessidades as $necessidade): ?>
                                     <label class="multiselect-option">
                                         <input type="checkbox" value="<?php echo htmlspecialchars($necessidade['id']); ?>">
@@ -258,6 +266,7 @@ $necessidades = getNecessidades();
                 </form>
             </section>
 
+            <!-- sessão formulário para instituição - 3 -->
             <section id="institution-register-section-3">
                 <div class="top-form">
                     <button class="back-button"><i class="fas fa-arrow-left"></i></button>

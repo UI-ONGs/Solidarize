@@ -29,7 +29,7 @@
                 </div>
                 <br>
                 <!-- Botão de voltar -->
-                <a href="https://ui-ongs.github.io/UI-PwbAval/Vagas.html"><button type="button" class="Voltar">Voltar</button></a>
+                <a href="Vagas.php"><button type="button" class="Voltar">Voltar</button></a>
             </fieldset>
 
         </form>

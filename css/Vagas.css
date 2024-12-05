@@ -39,7 +39,7 @@ body{
 
 /* Estilo para cards gerais */
 .card {
-    min-height: 250px;
+    min-height: 15.625rem;
     border-radius: 5%;
     background-color: #fff;
     overflow: hidden;
@@ -57,7 +57,7 @@ body{
 /* Estilo específico para conteúdo de imagem */
 .conteudoImg {
     position: relative;
-    row-gap: 5px;
+    row-gap: .3125rem;
     padding: 1.2em 0;
 }
 
@@ -185,9 +185,9 @@ header{
 .slide-container {
     /*background-image: url('imagens/paisagem.jpeg');
     background-size: cover;
-    border: 2px solid white;
+    border: .125rem solid white;
     border-radius: 2em;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(.625rem);
     background-position: center;*/
     max-width: 60vw;
     padding: 2.5em 0;
@@ -199,7 +199,7 @@ header{
     display: flex;
 }
 
-@media only screen and (max-width: 768px) {
+@media only screen and (max-width: 48rem) {
   .swiper-navBtn {
     display: none;
   }
@@ -236,7 +236,7 @@ header{
     border-radius: 1em;
   }
 
-@media only screen and (max-width: 300px){
+@media only screen and (max-width: 18.75rem){
   .slide-container{
     padding: 0;
     max-width: 100vw;
@@ -267,7 +267,7 @@ header {
 
 /* Estilo para seção cadastrar */
 .cadastrar {
-  padding: 20px 50px;
+  padding: 1.25rem 3.125rem;
 }
 .relative{
   margin-top: 1em;
@@ -289,9 +289,9 @@ main {
 
 body{
   background-color: #44b88b8f;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.171) 2px, transparent 0);
-  background-size: 30px 30px;
-  background-position: -5px -5px;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.171) .125rem, transparent 0);
+  background-size: 1.875rem 1.875rem;
+  background-position: -0.3125rem -0.3125rem;
   max-height: 100vh;
   overflow: hidden;
 }
@@ -323,7 +323,7 @@ body{
 }
 
 .input {
-  font-size: 0.9rem;
+  font-size: .9rem;
   background-color: transparent;
   width: 100%;
   height: 100%;
@@ -342,7 +342,7 @@ body{
   height: var(--border-height);
   left: 0;
   bottom: 0;
-  border-radius: 1px;
+  border-radius: .0625rem;
   transition: transform var(--timing) ease;
 }
 
@@ -371,20 +371,20 @@ input:not(:placeholder-shown) ~ .reset {
 }
 
 .form svg {
-  width: 17px;
-  margin-top: 3px;
+  width: 1.0625rem;
+  margin-top: .1875rem;
 }
 
 .shadow__btn {
     margin-top: 2em;
     min-width: 15vw;
     min-height: 7vh;
-    padding: 10px 20px;
+    padding: .625rem 1.25rem;
     border: none;
-    font-size: 25px;
+    font-size: 1.5625rem;
     color: #fff;
-    border-radius: 7px;
-    letter-spacing: 4px;
+    border-radius: .4375rem;
+    letter-spacing: .25rem;
     font-weight: 700;
     text-transform: uppercase;
     cursor: pointer;
@@ -393,18 +393,18 @@ input:not(:placeholder-shown) ~ .reset {
   
   .shadow__btn {
     background: var(--cor-primaria);
-    box-shadow: 0 0 25px var(--cor-primaria);
+    box-shadow: 0 0 1.5625rem var(--cor-primaria);
   }
   
   .shadow__btn:hover {
     min-width: 16vw;
     min-height: 8vh;
-    font-size: 30px;
+    font-size: 1.875rem;
     font-weight:900;
-    box-shadow: 0 0 5px var(--cor-primaria),
-                0 0 20px var(--cor-primaria),
-                0 0 40px var(--cor-primaria),
-                0 0 10px var(--cor-primaria);
+    box-shadow: 0 0 .3125rem var(--cor-primaria),
+                0 0 1.25rem var(--cor-primaria),
+                0 0 2.5rem var(--cor-primaria),
+                0 0 .625rem var(--cor-primaria);
   }
 
 .segurar{
@@ -413,6 +413,6 @@ input:not(:placeholder-shown) ~ .reset {
 
   /* Estilo para aplicar o blur */
 .blur {
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(.3125rem);
   transition: filter 1s ease-in-out;
 }

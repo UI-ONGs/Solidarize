@@ -4,11 +4,13 @@ require_once 'php/config.php';
 require_once 'php/check_auth.php';
 
 requireLogin();
+// checa se o usuário está logado
 
 $loggedIn = false;
 $username = '';
 $profileImage = '';
 
+// puxa seu username e imagem de perfil
 if (isset($_SESSION['user_id'])) {
     $loggedIn = true;
     $userId = $_SESSION['user_id'];
@@ -35,6 +37,7 @@ if (isset($_SESSION['user_id'])) {
         <img src="imagens/logo.png" alt="Solidarize Logo">
         <span class="navbar-logo-text">Solidarize</span>
     </div>
+    <!-- navbar para desktop -->
     <ul class="navbar-menu">
         <li><a href="index.php"><i class="fas fa-home"></i><span>Home</span></a></li>
         <li><a href="Perfil.php"><i class="fas fa-user"></i><span>Perfil</span></a></li>
@@ -43,7 +46,9 @@ if (isset($_SESSION['user_id'])) {
         <li><a href="Geo-Map.php"><i class="fas fa-map-marked-alt"></i><span>Mapa</span></a></li>
         <li><a href="About.php"><i class="fas fa-info-circle"></i><span>Sobre Nós</span></a></li>
     </ul>
+    <!-- área do usuário na navbar  -->
     <div class="navbar-user">
+        <!-- caso logado coloque suas informações, caso não, um link para login.php -->
         <?php if ($loggedIn): ?>
                     <img src="<?php echo htmlspecialchars($profileImage); ?>" alt="Foto do usuário" class="navbar-user-avatar">
                     <span class="navbar-user-name"><?php echo htmlspecialchars($username); ?></span>
@@ -53,6 +58,7 @@ if (isset($_SESSION['user_id'])) {
     </div>
 </nav>
 
+<!-- navbar para mobile -->
 <nav class="navbar-mobile">
     <div class="navbar-mobile-header">
         <img src="imagens/logo.png" alt="Solidarize Logo" class="navbar-mobile-logo">
@@ -62,6 +68,7 @@ if (isset($_SESSION['user_id'])) {
             <span></span>
         </button>
     </div>
+    <!-- menu expandido -->
     <ul class="navbar-mobile-menu">
         <li><a href="index.php"><i class="fas fa-home"></i>Home</a></li>
         <li><a href="Perfil.php"><i class="fas fa-user"></i>Perfil</a></li>

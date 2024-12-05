@@ -4,9 +4,12 @@ require_once 'php/config.php';
 require_once 'php/check_auth.php';
 
 requireLogin();
+// verifica se o usuário estálogado
 
 $userId = $_SESSION['user_id'];
+// pega seu id
 
+// puxa todas suas informações (tanto na tabela usuário quanto na voluntário)
 $stmt = $pdo->prepare("
     SELECT u.*,
            COALESCE(v.bio, i.descricao) as bio,
@@ -24,6 +27,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$userId]);
 $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
+// ajusta o output da imagem
 function saidaImagem($dadosImagem, $imagemPadrao) {
     if ($dadosImagem) {
         echo "data:image/jpeg;base64," . $dadosImagem;
@@ -51,15 +55,19 @@ function saidaImagem($dadosImagem, $imagemPadrao) {
     <!-- Include navbar -->
     <?php include 'NavBar.php'; ?>
 
+    <!-- container principal -->
     <div class="container">
         <div class="profile">
+            <!-- define capa caso haja, se não houver coloca uma imagem padrão -->
             <div class="wallpaper">
                 <img src="<?php saidaImagem($usuario['imagem_capa'], 'https://via.placeholder.com/800x200'); ?>" alt="Wallpaper" id="wallpaperImg">
             </div>
+            <!-- define imagem de perfil caso haja, se não houver coloca uma imagem padrão -->
             <div class="profile-info">
                 <div class="profile-photo-container">
                     <img src="<?php saidaImagem($usuario['imagem_perfil'], 'https://via.placeholder.com/150'); ?>" alt="Foto de perfil" class="profile-photo" id="profileImg">
                 </div>
+                <!-- coloca o restante dos dados do usuário, garantindo a remoção de caracteres especiais -->
                 <div class="name-username">
                     <h1 class="name"><?php echo htmlspecialchars($usuario['nome']) ?></h1>
                     <p class="username"><?php echo htmlspecialchars('@' . $usuario['username']) ?></p>
@@ -71,11 +79,13 @@ function saidaImagem($dadosImagem, $imagemPadrao) {
             </div>
         </div>
     </div>
+    <!-- botões de sair e desatiar conta -->
     <div class="profile-actions">
             <a href="php/logout.php" class="logout-button">Sair</a>
             <button class="deactivate-account">Desativar Conta</button>
     </div>
 
+    <!-- modal de editar perfil -->
     <div id="editModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -95,6 +105,7 @@ function saidaImagem($dadosImagem, $imagemPadrao) {
         </div>
     </div> 
     
+    <!-- modal dpara desativar perfil -->
     <div id="deactivateModal" class="modal">
     <div class="modal-content">
         <span class="close">&times;</span>

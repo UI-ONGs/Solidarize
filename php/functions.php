@@ -2,9 +2,25 @@
 session_start();
 require_once 'config.php';
 
+// Função para o upload de imagem
 function handleImageUpload($imageFile) {
+    // Verifica se um arquivo foi enviado e se não houve erros no upload
     if (!$imageFile || $imageFile['error'] !== UPLOAD_ERR_OK) {
-        error_log("Image upload failed: " . print_r($imageFile, true));
+        error_log("Falha no upload da imagem: " . print_r($imageFile, true));
+        return null;
+    }
+    
+    // Verifica o tipo de arquivo
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+    if (!in_array($imageFile['type'], $allowedTypes)) {
+        error_log("Tipo de arquivo não permitido: " . $imageFile['type']);
+        return null;
+    }
+    
+    // Limita o tamanho do arquivo (por exemplo, 5MB)
+    $maxFileSize = 5 * 1024 * 1024; // 5MB em bytes
+    if ($imageFile['size'] > $maxFileSize) {
+        error_log("Arquivo muito grande: " . $imageFile['size'] . " bytes");
         return null;
     }
     
@@ -17,25 +33,26 @@ function handleImageUpload($imageFile) {
         $stmt->execute([$base64Image]);
         return $pdo->lastInsertId();
     } catch (PDOException $e) {
-        error_log("Error inserting image: " . $e->getMessage());
+        error_log("Erro ao inserir imagem: " . $e->getMessage());
         return null;
     }
 }
 
+// Função para registrar usuário
 function registerUser($userData, $userType) {
     global $pdo;
     
     try {
         $pdo->beginTransaction();
         
-        // Handle profile and cover images
+        // Lida com imagem de perfil e de capa
         $profileImageId = isset($_FILES['profilePic']) ? handleImageUpload($_FILES['profilePic']) : null;
         $headerImageId = isset($_FILES['headerImage']) ? handleImageUpload($_FILES['headerImage']) : null;
         
-        // Hash the password
+        // Faz hash na senha
         $hashedPassword = password_hash($userData['password'], PASSWORD_DEFAULT);
         
-        // Insert into usuario table
+        // Insere os dados na tabela usuário
         $stmt = $pdo->prepare("
             INSERT INTO USUARIO (
                 nome, username, senha, email, tipo_usuario,
@@ -47,12 +64,15 @@ function registerUser($userData, $userType) {
                 NOW(), 'ATIVO', NOW(), NOW()
             )
         ");
+
+        $email = filter_var($userData['email'], FILTER_SANITIZE_EMAIL);
+        $email = filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : '';
         
         $stmt->execute([
             ':nome' => $userData['name'],
             ':username' => $userData['username'] ?? $userData['name'],
             ':senha' => $hashedPassword,
-            ':email' => $userData['email'],
+            ':email' => $email,
             ':tipo_usuario' => $userType,
             ':imagem_perfil_id' => $profileImageId,
             ':imagem_capa_id' => $headerImageId
@@ -60,7 +80,7 @@ function registerUser($userData, $userType) {
         
         $userId = $pdo->lastInsertId();
         
-        // Additional user type specific registration logic
+        // Verifica qual tipo de usuário e adiciona o restante dos dados
         if ($userType === 'INSTITUICAO') {
             $stmt = $pdo->prepare("
                 INSERT INTO INSTITUICAO (
@@ -84,7 +104,7 @@ function registerUser($userData, $userType) {
                 ':tamanho' => $userData['size'] ?? null
             ]);
 
-            // Insert institution needs with quantities
+            // Insere as necessidades e quantidades da instituição
             if (!empty($userData['needs'])) {
                 $stmt = $pdo->prepare("
                     INSERT INTO INSTITUICAO_NECESSIDADE (
@@ -103,7 +123,7 @@ function registerUser($userData, $userType) {
                 }
             }
 
-            // Insert institution categories
+            // Insere as categorias da instituição
             if (!empty($userData['categories'])) {
                 $stmt = $pdo->prepare("
                     INSERT INTO USUARIO_CATEGORIA (
@@ -141,56 +161,59 @@ function registerUser($userData, $userType) {
         
     } catch (Exception $e) {
         $pdo->rollBack();
-        error_log("Error in registration: " . $e->getMessage());
+        error_log("Erro no registro: " . $e->getMessage());
         return ['success' => false, 'message' => 'Erro ao realizar cadastro: ' . $e->getMessage()];
     }
 }
 
-// Function to get categories from database
+// Função para pegar as categorias do banco
 function getCategorias() {
     global $pdo;
     try {
         $stmt = $pdo->query("SELECT id, nome FROM CATEGORIA ORDER BY nome");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        error_log("Error fetching categories: " . $e->getMessage());
+        error_log("Erro ao buscar categorias: " . $e->getMessage());
         return [];
     }
 }
 
-// Function to get needs from database
+// Função para pegar as necessidades do banco
 function getNecessidades() {
     global $pdo;
     try {
         $stmt = $pdo->query("SELECT id, nome FROM NECESSIDADE ORDER BY nome");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $e) {
-        error_log("Error fetching needs: " . $e->getMessage());
+        error_log("Erro ao buscar necessidades: " . $e->getMessage());
         return [];
     }
 }
 
-// Handle POST requests
+// Lida com as requisições de post
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action = $_POST['action'] ?? '';
     
     switch ($action) {
         case 'registerVolunteer':
+        case 'registerInstitution':
+            // Verifica se foram enviados arquivos e se não excedem o tamanho permitido
+            if (!empty($_FILES)) {
+                foreach ($_FILES as $key => $file) {
+                    if ($file['error'] === UPLOAD_ERR_INI_SIZE || $file['error'] === UPLOAD_ERR_FORM_SIZE) {
+                        $response = ['success' => false, 'message' => 'O arquivo enviado é muito grande.'];
+                        break 2; // Sai do switch e do if
+                    }
+                }
+            }
+            
             $userData = [
                 'name' => $_POST['name'] ?? '',
                 'username' => $_POST['username'] ?? '',
                 'email' => $_POST['email'] ?? '',
                 'password' => $_POST['password'] ?? '',
                 'data_nascimento' => $_POST['dob'] ?? null,
-                'bio' => $_POST['description'] ?? null
-            ];
-            $response = registerUser($userData, 'VOLUNTARIO');
-            break;
-        case 'registerInstitution':
-            $userData = [
-                'name' => $_POST['name'] ?? '',
-                'email' => $_POST['email'] ?? '',
-                'password' => $_POST['password'] ?? '',
+                'bio' => $_POST['description'] ?? null,
                 'cnpj' => $_POST['cnpj'] ?? '',
                 'description' => $_POST['description'] ?? null,
                 'mission' => $_POST['mission'] ?? null,
@@ -202,10 +225,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'categories' => $_POST['categories'] ?? [],
                 'needs' => $_POST['needs'] ?? []
             ];
-            $response = registerUser($userData, 'INSTITUICAO');
-            break;
-        case 'login':
-            $response = loginUser($_POST['email'], $_POST['password']);
+            $response = registerUser($userData, $action === 'registerVolunteer' ? 'VOLUNTARIO' : 'INSTITUICAO');
             break;
         case 'getCategorias':
             $response = ['success' => true, 'data' => getCategorias()];

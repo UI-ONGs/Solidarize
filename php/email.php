@@ -1,4 +1,6 @@
 <?php
+
+//função pra mandar email (não funciona no inifinity free)
 $to = "guilhermesouza3278@exemplo.com";
 $subject = "Teste Envio de E-mail Via PHP";
 $message = "Este é um teste de email enviado via PHP";

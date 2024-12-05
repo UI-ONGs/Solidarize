@@ -256,6 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = 'Detalhes-Instituicao.html';
     }
 
+    // renderiza o calendário
     function renderCalendar(direction = '') {
         calendarGrid.innerHTML = '';
         const year = currentDate.getFullYear();
@@ -308,6 +309,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Mostra os eventos
     function showEvents(date) {
         const dayEvents = events.filter(event => event.date.toDateString() === date.toDateString());
         eventList.innerHTML = '';
@@ -334,6 +336,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // navegação por mês no calendário
     function navigateMonth(direction) {
         currentDate.setMonth(currentDate.getMonth() + (direction === 'prev' ? -1 : 1));
         renderCalendar(direction === 'prev' ? 'right' : 'left');
@@ -353,6 +356,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // animação dos valores
     function animateValue(obj, start, end, duration) {
         let startTimestamp = null;
         const step = (timestamp) => {
@@ -366,6 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.requestAnimationFrame(step);
     }
 
+    //lida com o formulário newsletter
     function handleNewsletterSubmit(e) {
         e.preventDefault();
         const email = this.querySelector('input[type="email"]').value;

@@ -44,6 +44,8 @@ section{
     text-shadow: .125rem .125rem .25rem rgba(0,0,0,0.5);
 }
 
+/* Responsividade Seção Hero */
+
 @media (max-width: 48rem) {
     .hero-content {
         display: flex;
@@ -244,6 +246,7 @@ section{
     font-weight: bold;
 }
 
+/* Responsvidade Features */
 @media (max-width: 48rem) {
     .features-container {
         flex-direction: column;
@@ -259,8 +262,6 @@ section{
         padding: 1rem;
     }
 }
-
-
 
 /* Seção Valores */
 .values {
@@ -320,6 +321,8 @@ p {
     font-size: .9rem;
     color: #666;
 }
+
+/* Responsividade Seção Valores */
 @media (max-width: 48rem) {
     .value-grid {
         grid-template-columns: 1fr;
@@ -333,8 +336,6 @@ p {
         max-width: 20rem;
     }
 }
-
-
 
 /* Seção FAQ */
 .faq-section {

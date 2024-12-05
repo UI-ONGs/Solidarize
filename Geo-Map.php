@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/Geo-Map.css">
     <link rel="icon" href="imagens/logo.png">
     <script src="https://kit.fontawesome.com/0e6a916873.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" defer></script>
     <script src="js/Geo-Map.js" defer></script>
     <script src="js/NavBar.js" defer></script>
 </head>
@@ -18,12 +19,15 @@
     <!-- Include navbar -->
     <?php include 'NavBar.php'; ?>
 
+    <!-- container principal  -->
     <div class="container">
         <div class="controls">
+            <!-- area de pesquisa -->
             <div class="search-container">
                 <input type="text" id="search" placeholder="Pesquise por nome de uma instituição ou evento...">
                 <i class="fas fa-search search-icon"></i>
             </div>
+            <!-- alternador -->
             <div class="toggle-container">
                 <div class="toggle-option active">ONGs</div>
                 <div class="toggle-option">Eventos</div>
@@ -33,6 +37,7 @@
         <div id="map"></div>
     </div>
 
+    <!-- modal para detalhes -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <button class="close-btn">&times;</button>
@@ -48,6 +53,5 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 </body>
 </html>

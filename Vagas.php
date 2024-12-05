@@ -4,9 +4,10 @@ require_once 'php/functions.php';
 
 try {
     
-    // Add error reporting
+    // adiciona rportador de erros
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     
+    // puxa todos os voluntariados e todas suas informações (da tabela atividade e voluntariado)
     $sql = "SELECT a.id, a.titulo, a.descricao, i.base64_data AS imagem 
             FROM ATIVIDADE a 
             JOIN VOLUNTARIADO v ON a.id = v.atividade_id 
@@ -17,7 +18,7 @@ try {
     $stmt = $pdo->prepare($sql);
     $stmt->execute();
     
-    // Store results in array for debugging
+    // adiciona os resultados num array, para debugar
     $voluntariados = $stmt->fetchAll(PDO::FETCH_ASSOC);
     
     // Debug output
@@ -48,13 +49,14 @@ try {
     <link rel="stylesheet" href="css/Vagas.css">
     <script src="https://kit.fontawesome.com/0e6a916873.js" crossorigin="anonymous"></script>
     <script src="js/NavBar.js" defer></script>
+    <script src="js/Vagas.js" defer></script>
     
     <link rel="icon" href="imagens/logo.png">
 </head>
 <body>
     <?php include 'NavBar.php'; ?>
     <main>
-        <!-- Header section remains the same -->
+        <!-- Header -->
         <header class="blurElem">
                 <form class="form">
                   <button class="segurar">
@@ -85,6 +87,7 @@ try {
                         $encryptedId = encryptId($voluntariado['id']);
                         ?>
                         <div class="card swiper-slide">
+                            <!-- cria um card para cada voluntariado e adiciona suas informações -->
                             <div class="conteudoImg">
                                 <span class="overlay"></span>
                                 <div class="cardImage">
@@ -127,73 +130,8 @@ try {
         </div>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Debug check for slides
-            const slides = document.querySelectorAll('.swiper-slide');
-            console.log('Number of slides:', slides.length);
-
-            // Initialize Swiper with modified settings
-            const swiper = new Swiper('.swiper', {
-                loop: false, // Disable loop mode initially
-                centeredSlides: true,
-                keyboard: {
-                    enabled: true,
-                    onlyInViewport: false,
-                },
-                mousewheel: {
-                    invert: true,
-                },
-                grabCursor: true,
-                navigation: {
-                    nextEl: '.swiper-button-next',
-                    prevEl: '.swiper-button-prev',
-                },
-                pagination: {
-                    el: '.swiper-pagination',
-                },
-                autoplay: {
-                    delay: 5000,
-                    disableOnInteraction: false,
-                },
-                spaceBetween: 30,
-                effect: "coverflow",
-                coverflowEffect: {
-                    rotate: -5,
-                    stretch: 10,
-                    depth: 100,
-                    modifier: 1,
-                    slideShadows: false,
-                },
-                direction: 'vertical',
-                slidesPerView: 1,
-                breakpoints: {
-                    768: {
-                        direction: 'horizontal',
-                        slidesPerView: 2,
-                        spaceBetween: 30,
-                    },
-                    1400: {
-                        direction: 'horizontal',
-                        slidesPerView: 3,
-                        spaceBetween: 40,
-                    },
-                },
-                on: {
-                    init: function () {
-                        // Enable loop mode if there are enough slides
-                        if (slides.length > 3) {
-                            this.params.loop = true;
-                            this.update();
-                        }
-                        console.log('Swiper initialized');
-                    },
-                }
-            });
-        });
-    </script>
-
     <?php
+    // função pre encriptar id
     function encryptId($id) {
         $key = '23091750396'; 
         $iv = openssl_random_pseudo_bytes(openssl_cipher_iv_length('aes-256-cbc'));

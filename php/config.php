@@ -1,9 +1,10 @@
 <?php
 
-$host = 'sql204.infinityfree.com';
-$db   = 'if0_37518337_solidarize';
-$user = 'if0_37518337';
-$pass = 'kIHOlFSMoi';
+//Configura o banco, e faz a conexão utilizando PDO
+$host = '';
+$db   = '';
+$user = '';
+$pass = '';
 $charset = 'utf8mb4';
 
 $dsn = "mysql:host=$host;dbname=$db;charset=$charset";

@@ -2,10 +2,12 @@
 
 <footer class="main-footer">
     <div class="footer-content">
+        <!-- Informações principais -->
         <div class="footer-section">
             <h4>Sobre o Portal ONGs</h4>
             <p>Conectando pessoas e organizações para um mundo melhor. Junte-se a nós nessa jornada de transformação social.</p>
         </div>
+        <!-- Links rápidos -->
         <div class="footer-section">
             <h4>Links Rápidos</h4>
             <ul>
@@ -16,6 +18,7 @@
                 <li><a href="#donate">Doações</a></li>
             </ul>
         </div>
+        <!-- área de contato -->
         <div class="footer-section">
             <h4>Contato</h4>
             <p>Email: contato@portalongs.org</p>

@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     editProfileButton.addEventListener('click', () => {
         editModal.style.display = 'block';
-        // Store original form data when opening modal
+        // armazena os dados antigos quando o modal é aberto
         originalFormData = new FormData(editProfileForm);
     });
 
@@ -77,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Username validation
+    // validação do nome de usuário
     let usernameTimeout;
     usernameInput.addEventListener('input', () => {
         clearTimeout(usernameTimeout);
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Preview uploaded images
+    // preview da imagem
     const profileImageUpload = document.getElementById('profileImageUpload');
     const wallpaperImageUpload = document.getElementById('wallpaperImageUpload');
     const profileImg = document.getElementById('profileImg');
@@ -172,12 +172,12 @@ const confirmDeactivateButton = document.getElementById('confirmDeactivate');
 const cancelDeactivateButton = document.getElementById('cancelDeactivate');
 const deactivateModalClose = deactivateModal.querySelector('.close');
 
-// Show deactivate modal
+// mostra o modal para ativar a conta
 deactivateButton.addEventListener('click', () => {
     deactivateModal.style.display = 'block';
 });
 
-// Hide deactivate modal
+// esconde o modal para desativar a conta
 function hideDeactivateModal() {
     deactivateModal.style.display = 'none';
 }
@@ -191,7 +191,7 @@ function hideDeactivateModal() {
         }
     });
 
-    // Handle account deactivation
+    // lida com o desativamento da conta
     confirmDeactivateButton.addEventListener('click', async () => {
         try {
             const response = await fetch('../php/deactivate_account.php', {

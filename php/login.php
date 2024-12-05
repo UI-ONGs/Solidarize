@@ -2,7 +2,7 @@
 session_start();
 require_once 'config.php';
 
-// Function to show message
+// Função para mostrar mensagens
 function ShowMessage($message, $isError = false) {
     header('Content-Type: application/json');
     echo json_encode([
@@ -12,11 +12,14 @@ function ShowMessage($message, $isError = false) {
     exit;
 }
 
+// Verifica se os dados foram inseridos e checa
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
 
-    $email = $data['email'] ?? '';
+    // Filtro de validação
+    $email = filter_var($data['email'], FILTER_SANITIZE_EMAIL);
+    $email = filter_var($email, FILTER_VALIDATE_EMAIL) ? $email : '';
     $password = $data['password'] ?? '';
     $stayConnected = $data['stayConnected'] ?? false;
 
@@ -38,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($password, $user['senha'])) {
-            // Check user status
+            // Checa o status do usuário
             if ($user['status'] === 'INATIVO') {
                 ShowMessage('Esta conta está inativa. Entre em contato com o suporte.', true);
             }
@@ -51,11 +54,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ShowMessage('Não foi possível fazer login. Entre em contato com o suporte.', true);
             }
 
-            // For "Manter conectado", set a long-lasting session
+            // Para "Manter conectado", a sessão irá durar mais tempo
             if ($stayConnected) {
-                ini_set('session.cookie_lifetime', 30 * 24 * 60 * 60); // 30 days
+                ini_set('session.cookie_lifetime', 30 * 24 * 60 * 60); // 30 dias
             } else {
-                ini_set('session.cookie_lifetime', 0); // Session cookie
+                ini_set('session.cookie_lifetime', 0); // Sessão cookie
             }
             
             session_regenerate_id(true);
@@ -65,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_type'] = $user['tipo_usuario'];
             $_SESSION['logged_in'] = true;
 
-            // Update last access
+            // Atualiza o último acesso
             $updateStmt = $pdo->prepare("UPDATE USUARIO SET ultimo_acesso = NOW() WHERE id = ?");
             $updateStmt->execute([$user['id']]);
 

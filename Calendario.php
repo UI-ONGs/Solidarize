@@ -11,24 +11,32 @@
     <link rel="stylesheet" href="css/NavBar.css">
     <script src="js/NavBar.js" defer></script>
     <script src="js/Calendario.js" defer></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" defer></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js" defer></script>
+    
 </head>
 <body>
     <!-- Include navbar -->
     <?php include 'NavBar.php'; ?>
     <main class="main-content">
+        <!-- Container principal -->
         <div class="container">
             <h1>Calendário de Eventos ONG</h1>
+            <!-- Barra de pesquisa -->
             <div class="search-bar">
                 <input type="date" id="date-search" aria-label="Pesquisar por data">
                 <button id="search-btn">Pesquisar</button>
             </div>
+            <!-- calendário  -->
             <div class="calendar-container">
+                <!-- pesquisa no calendário -->
                 <div class="calendar">
                     <div class="calendar-header">
                         <button id="prev-month">&lt;</button>
                         <h2 id="current-month"></h2>
                         <button id="next-month">&gt;</button>
                     </div>
+                    <!-- dias da semana -->
                     <div class="weekdays">
                         <div>Dom</div>
                         <div>Seg</div>
@@ -38,8 +46,10 @@
                         <div>Sex</div>
                         <div>Sáb</div>
                     </div>
+                    <!-- dias do Mês, adicionados em js -->
                     <div class="calendar-grid" id="calendar-grid"></div>
                 </div>
+                <!-- eventos de determinado dia -->
                 <div class="event-list">
                     <h2>Eventos do Dia</h2>
                     <div id="event-list-container"></div>
@@ -48,6 +58,7 @@
             </div>
         </div>
 
+        <!-- modal para cadastrar evento -->
         <div id="event-modal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
@@ -89,6 +100,7 @@
             </div>
         </div>
 
+        <!-- visualizar detalhes de um evento -->
         <div id="event-details-modal" class="modal">
             <div class="modal-content">
                 <span class="close">&times;</span>
@@ -117,8 +129,5 @@
             </div>
         </div>
     </main>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
-    
 </body>
 </html>

@@ -8,6 +8,7 @@ if (empty($query)) {
     exit;
 }
 
+// seleciona 10 atividades de uma instituição
 $stmt = $pdo->prepare("
     SELECT 'instituicao' as tipo, i.usuario_id as id, u.nome
     FROM INSTITUICAO i

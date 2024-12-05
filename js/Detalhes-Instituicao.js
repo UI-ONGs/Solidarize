@@ -90,7 +90,7 @@ async function fetchDataEventos() {
             body: formData
         });
         if (!response.ok) {
-            throw new Error('Network response deu merda');
+            throw new Error('Network response deu ruim');
         }
         const data = await response.json();
 
@@ -137,7 +137,7 @@ async function fetchDataInst() {
     try {
         const response = await fetch('php/requestInstituicao.php');
         if (!response.ok) {
-            throw new Error('Network response deu merda');
+            throw new Error('Network response deu ruim');
         }
         const data = await response.json();
 

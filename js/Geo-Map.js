@@ -1,8 +1,11 @@
+// cria um mapa e inicializa ele em Vitória-ES
+
 const map = L.map('map').setView([-20.2976, -40.2958], 13);
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-
+        
+        // define os elementos do dom
         const toggleContainer = document.querySelector('.toggle-container');
         const toggleOptions = document.querySelectorAll('.toggle-option');
         const modal = document.getElementById('modal');
@@ -12,10 +15,12 @@ const map = L.map('map').setView([-20.2976, -40.2958], 13);
         const carouselInner = document.querySelector('.carousel-inner');
         const carouselDots = document.querySelector('.carousel-dots');
 
+        // inicializa varáveis
         let currentMode = 'ngos';
         let markers = [];
         let currentSlide = 0;
 
+        // define as ongs e eventos (posteriormente será pego do banco)
         const data = {
             ngos: [
                 {
@@ -104,6 +109,7 @@ const map = L.map('map').setView([-20.2976, -40.2958], 13);
             ]
         };
 
+        // adicione os pontos para cada uma das ongs e eventos
         function addMarkers(items) {
             markers.forEach(marker => map.removeLayer(marker));
             markers = [];
@@ -115,6 +121,7 @@ const map = L.map('map').setView([-20.2976, -40.2958], 13);
             });
         }
 
+        // modela com as indormações quando um ponto é clicado
         function showModal(item) {
             modal.querySelector('h2').textContent = item.name;
             modal.querySelector('.description').textContent = item.description;
@@ -152,6 +159,7 @@ const map = L.map('map').setView([-20.2976, -40.2958], 13);
             document.body.style.overflow = 'hidden';
         }
 
+        // função para atualizar o carrosel
         function updateCarousel() {
             carouselInner.style.transform = `translateX(-${currentSlide * 100}%)`;
             const dots = carouselDots.querySelectorAll('.carousel-dot');
@@ -197,6 +205,7 @@ const map = L.map('map').setView([-20.2976, -40.2958], 13);
             }
         });
 
+        // função para esquisa de pontos
         function performSearch() {
             const searchTerm = searchInput.value.toLowerCase();
             const filteredItems = data[currentMode].filter(item => 
@@ -224,4 +233,5 @@ const map = L.map('map').setView([-20.2976, -40.2958], 13);
             }
         });
 
+        // adiciona os pontos
         addMarkers(data.ngos);

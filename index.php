@@ -3,12 +3,14 @@ session_start();
 require_once 'php/config.php';
 require_once 'php/check_auth.php';
 
+// verifica login
 requireLogin();
 
 $loggedIn = false;
 $username = '';
 $profileImage = '';
 
+// puxa informações do usuário (username e imagem de perfil)
 if (isset($_SESSION['user_id'])) {
     $loggedIn = true;
     $userId = $_SESSION['user_id'];
@@ -46,9 +48,8 @@ if (isset($_SESSION['user_id'])) {
 <body>
      <!-- Include navbar -->
      <?php include 'NavBar.php'; ?>
-
-
     
+    <!-- Container principal -->
     <main class="main-content">
         <header class="top-bar">
             <div class="search-container">
@@ -57,16 +58,19 @@ if (isset($_SESSION['user_id'])) {
                 <div id="search-results" class="search-results"></div>
 
             </div>
-
+            <!-- área do usuário -->
             <div class="user-menu">
+                <!-- verifica se está logado e coloca as informações dele-->
                 <?php if ($loggedIn): ?>
                     <img src="<?php echo htmlspecialchars($profileImage); ?>" alt="Foto do usuário" class="user-avatar">
                     <span class="user-name">Olá, <?php echo htmlspecialchars($username); ?></span>
                 <?php else: ?>
+                    <!-- caso não, coloque um link para o logn.php  -->
                     <a href="Login.php" class="login-link">Entrar</a>
                 <?php endif; ?>
             </div>
         </header>
+        <!-- área de seja bem-vindo -->
         <div class="content-area">
             <section class="welcome-section">
                 <h2>Bem-vindo ao Portal ONGs</h2>
@@ -76,6 +80,7 @@ if (isset($_SESSION['user_id'])) {
                     <a href="#explore" class="cta-button secondary">Explorar Causas</a>
                 </div>
             </section>
+            <!--instituições por causa -->
             <section class="featured-causes">
                 <h3>Causas em Destaque</h3>
                 <div class="cause-slider">
@@ -83,7 +88,7 @@ if (isset($_SESSION['user_id'])) {
                         <img src="imagens/floresta.jpg" alt="Causa 1" class="cause-image">
                         <h4>Preservação Ambiental</h4>
                         <p>Protegendo nossas florestas e oceanos para as futuras gerações.</p>
-                        <a href="#cause1" class="learn-more">Saiba mais</a>
+                        <a href="Detalhes-Instituicao.php" class="learn-more">Saiba mais</a>
                     </div>
                     <div class="cause-item">
                         <img src="imagens/floresta.jpg" alt="Causa 2" class="cause-image">
@@ -99,6 +104,7 @@ if (isset($_SESSION['user_id'])) {
                     </div>
                 </div>
             </section>
+            <!-- layout em duas colunas, para mapa e calendário -->
             <div class="two-column-layout">
                 <section class="upcoming-events">
                     <h3>Próximos Eventos</h3>
@@ -126,8 +132,10 @@ if (isset($_SESSION['user_id'])) {
                     <div id="eventList" class="event-list"></div>
                 </div>
                 </section>
+                <!-- área do mapa -->
                 <section class="nearby-organizations">
                     <h3>ONGs Próximas a Você</h3>
+                    <!--mostra o mapa e algumas nstituições próxima (simulado- não funcional ainda) -->
                     <div class="org-map">
                         <img src="imagens/header.webp" alt="Mapa de ONGs" class="map-image">
                     </div>
@@ -162,6 +170,7 @@ if (isset($_SESSION['user_id'])) {
                     </ul>
                 </section>
             </div>
+            <!-- status de impacto -->
             <section class="impact-stats">
                 <h3>Nosso Impacto</h3>
                 <div class="stats-container">
@@ -187,6 +196,7 @@ if (isset($_SESSION['user_id'])) {
                     </div>
                 </div>
             </section>
+            <!-- declarações, testemunho -->
             <section class="testimonials">
                 <h3>O Que Dizem Sobre Nós</h3>
                 <div class="testimonial-slider">
@@ -212,6 +222,7 @@ if (isset($_SESSION['user_id'])) {
                     </div>
                 </div>
             </section>
+            <!-- newsletter (não funciona, ainda) -->
             <section class="newsletter">
                 <h3>Fique por Dentro</h3>
                 <p>Receba atualizações sobre eventos, oportunidades de voluntariado e histórias inspiradoras.</p>

@@ -1,9 +1,12 @@
+
+/* Reset de estilo padrão */
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
+/* Estilos gerais para o corpo e container principal */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f0f2f5;
@@ -20,6 +23,7 @@ body {
     margin-left: 3.75rem;
 }
 
+/* Estilo das imagens do perfil */
 .profile {
     background-color: white;
     border-radius: .5rem;
@@ -29,10 +33,12 @@ body {
     max-width: 68.75rem;
 }
 
+
 .wallpaper {
     height: 12.5rem;
     position: relative;
     overflow: hidden;
+    background-color: #f0f2f5; /* Add a background color in case the image doesn't load */
 }
 
 .wallpaper img {
@@ -42,6 +48,8 @@ body {
     display: block;
 }
 
+
+/* Informações do perfil */
 .profile-info {
     padding: 1.25rem;
     position: relative;
@@ -57,12 +65,14 @@ body {
     border: .25rem solid white;
     overflow: hidden;
     box-shadow: 0 .125rem .25rem rgba(0, 0, 0, 0.1);
+    background-color: #f0f2f5; /* Add a background color in case the image doesn't load */
 }
 
 .profile-photo {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center; /* Ensure the image is centered */
 }
 
 .name-username {
@@ -93,6 +103,7 @@ body {
 
 }
 
+/* Ícones sociais - ainda a ser implementado */
 .social-icons {
     position: absolute;
     top: 1.25rem;
@@ -115,6 +126,7 @@ body {
     color: #7f8c8d;
 }
 
+/* Botão editar perfil */
 .edit-profile {
     position: absolute;
     margin-top: .9375rem;
@@ -135,6 +147,7 @@ body {
     background-color: #7f8c8d;
 }
 
+/* Seção de colaboradores - ainda a ser implementado */
 .collaborator {
     margin-top: 1.25rem;
     background-color: white;
@@ -177,6 +190,7 @@ body {
     transform: scale(1.1);
 }
 
+/* Modal Editar Perfil */
 .modal {
     display: none;
     position: fixed;
@@ -225,6 +239,7 @@ body {
     color: #7f8c8d;
 }
 
+/* Conteúdo do modal */
 .modal-content h2 {
     margin-bottom: 1.25rem;
     color: #1c1e21;
@@ -289,15 +304,18 @@ body {
     background-color: #45736A;
 }
 
+/* Contador de caracteres */
 .char-counter{
     display: block;
-    margin-bottom: 10px;
+    margin-bottom: .625rem;
 }
 
+/* Mensagem de erro */
 .error-message{
-    margin-bottom: 10px;
+    margin-bottom: .625rem;
 }
 
+/*responsividade*/
 @media (max-width: 48rem) {
     .container {
         padding: .625rem;
@@ -358,24 +376,24 @@ body {
     }
 }
 
-/* Add these new styles to your existing CSS file */
+/* Desativar e deslogar  */
 
 .profile-actions {
     display: flex;
-    gap: 12px;
+    gap: .75rem;
     position: absolute;
-    top: 24px;
-    right: 24px;
+    top: 1.5rem;
+    right: 1.5rem;
 }
 
 .logout-button {
     background-color: #65676b;
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
+    padding: .5rem 1rem;
+    border-radius: .375rem;
     cursor: pointer;
-    font-size: 14px;
+    font-size: .875rem;
     font-weight: 600;
     text-decoration: none;
     transition: background-color 0.2s;
@@ -389,10 +407,10 @@ body {
     background-color: #dc3545;
     color: white;
     border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
+    padding: .5rem 1rem;
+    border-radius: .375rem;
     cursor: pointer;
-    font-size: 14px;
+    font-size: .875rem;
     font-weight: 600;
     transition: background-color 0.2s;
 }
@@ -403,18 +421,18 @@ body {
 
 .modal-actions {
     display: flex;
-    gap: 12px;
-    margin-top: 24px;
+    gap: .75rem;
+    margin-top: 1.5rem;
 }
 
 .danger-button {
     background-color: #dc3545;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
+    padding: .625rem 1.25rem;
+    border-radius: .375rem;
     cursor: pointer;
-    font-size: 14px;
+    font-size: .875rem;
     font-weight: 600;
     transition: background-color 0.2s;
 }
@@ -427,10 +445,10 @@ body {
     background-color: #6c757d;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
+    padding: .625rem 1.25rem;
+    border-radius: .375rem;
     cursor: pointer;
-    font-size: 14px;
+    font-size: .875rem;
     font-weight: 600;
     transition: background-color 0.2s;
 }
@@ -439,11 +457,12 @@ body {
     background-color: #5a6268;
 }
 
-@media (max-width: 768px) {
+/*Responsividade*/
+@media (max-width: 48rem) {
     .profile-actions {
         position: static;
         flex-direction: column;
-        margin-top: 16px;
+        margin-top: 1rem;
         width: 100%;
     }
 

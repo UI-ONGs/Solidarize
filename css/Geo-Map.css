@@ -1,6 +1,6 @@
 /* Importa a fonte Poppins do Google Fonts */
-
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 :root {
     --primary-color: #4A7B78;
     --secondary-color: #6DA0A6;
@@ -12,6 +12,7 @@
     --transition: all 0.3s ease;
 }
 
+/* Reset de estilos e definição de variáveis */
 * {
     margin: 0;
     padding: 0;
@@ -28,64 +29,68 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 75rem;
     margin: 0 auto;
-    padding: 20px;
+    padding: 1.25rem;
 }
 
+/* Estilos para o mapa */
 #map {
-    height: calc(100vh - 200px);
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    height: calc(100vh - 12.5rem);
+    border-radius: .625rem;
+    box-shadow: 0 .25rem .375rem rgba(0, 0, 0, 0.1);
 }
 
+/* Estilos para os controles */
 .controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
     background-color: var(--white);
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: .625rem;
+    border-radius: .625rem;
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, 0.1);
 }
 
+/* Estilos para a barra de pesquisa */
 .search-container {
     flex-grow: 1;
-    margin-right: 20px;
+    margin-right: 1.25rem;
     position: relative;
 }
 
 #search {
     width: 100%;
-    padding: 12px 40px 12px 15px;
-    font-size: 16px;
+    padding: .75rem 2.5rem .75rem .9375rem;
+    font-size: 1rem;
     border: none;
-    border-radius: 25px;
+    border-radius: 1.5625rem;
     background-color: var(--background-color);
     transition: var(--transition);
 }
 
 #search:focus {
     outline: none;
-    box-shadow: 0 0 0 2px var(--secondary-color);
+    box-shadow: 0 0 0 .125rem var(--secondary-color);
 }
 
 .search-icon {
     position: absolute;
-    right: 15px;
+    right: .9375rem;
     top: 50%;
     transform: translateY(-50%);
     color: var(--primary-color);
     cursor: pointer;
 }
 
+/* Estilos para o toggle */
 .toggle-container {
     position: relative;
-    width: 200px;
-    height: 40px;
+    width: 12.5rem;
+    height: 2.5rem;
     background-color: var(--background-color);
-    border-radius: 20px;
+    border-radius: 1.25rem;
     cursor: pointer;
     overflow: hidden;
 }
@@ -113,17 +118,17 @@ body {
 
 .toggle-switch {
     position: absolute;
-    top: 2px;
-    left: 2px;
-    width: calc(50% - 4px);
-    height: calc(100% - 4px);
+    top: .125rem;
+    left: .125rem;
+    width: calc(50% - .25rem);
+    height: calc(100% - .25rem);
     background-color: var(--primary-color);
-    border-radius: 18px;
+    border-radius: 1.125rem;
     transition: var(--transition);
 }
 
 .toggle-container.events .toggle-switch {
-    left: calc(50% + 2px);
+    left: calc(50% + .125rem);
 }
 
 .toggle-option:nth-child(2){
@@ -138,6 +143,7 @@ body {
     color: var(--white);
 }
 
+/* Estilos para o modal */
 .modal {
     display: none;
     position: fixed;
@@ -159,15 +165,15 @@ body {
 .modal-content {
     background-color: var(--white);
     margin: 5% auto;
-    padding: 30px;
-    border-radius: 10px;
-    max-width: 800px;
+    padding: 1.875rem;
+    border-radius: .625rem;
+    max-width: 50rem;
     width: 90%;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 .25rem .375rem rgba(0, 0, 0, 0.1);
     position: relative;
     max-height: 90vh;
     overflow-y: auto;
-    transform: translateY(-50px);
+    transform: translateY(-3.125rem);
     opacity: 0;
     transition: all 0.3s ease;
 }
@@ -179,14 +185,63 @@ body {
 
 .modal h2 {
     color: var(--primary-color);
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
     font-size: 2rem;
 }
 
+.modal p {
+    margin-bottom: .9375rem;
+    font-size: 1.1rem;
+}
+
+.modal .address {
+    font-style: italic;
+    color: var(--gray);
+}
+
+.modal .institution {
+    font-weight: bold;
+    color: var(--secondary-color);
+}
+
+.close-btn {
+    position: absolute;
+    top: 0;
+    right: .625rem;
+    background-color: transparent;
+    border: none;
+    font-size: 3rem;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.close-btn:hover {
+    color: var(--tertiary-color);
+}
+
+.see-more-btn {
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 1.5625rem;
+    color: var(--white);
+    cursor: pointer;
+    font-size: 1rem;
+    padding: .625rem 1.25rem;
+    transition: var(--transition);
+    display: inline-block;
+    margin-top: .625rem;
+}
+
+.see-more-btn:hover {
+    background-color: var(--tertiary-color);
+}
+
+/* Estilos para o carrossel */
 .carousel {
     position: relative;
-    margin-bottom: 20px;
-    border-radius: 10px;
+    margin-bottom: 1.25rem;
+    border-radius: .625rem;
     overflow: hidden;
 }
 
@@ -208,15 +263,15 @@ body {
 .carousel-dots {
     display: flex;
     justify-content: center;
-    margin-top: 10px;
+    margin-top: .625rem;
 }
 
 .carousel-dot {
-    width: 10px;
-    height: 10px;
+    width: .625rem;
+    height: .625rem;
     border-radius: 50%;
     background-color: var(--gray);
-    margin: 0 5px;
+    margin: 0 .3125rem;
     cursor: pointer;
     transition: var(--transition);
 }
@@ -225,55 +280,8 @@ body {
     background-color: var(--primary-color);
 }
 
-.modal p {
-    margin-bottom: 15px;
-    font-size: 1.1rem;
-}
-
-.modal .address {
-    font-style: italic;
-    color: var(--gray);
-}
-
-.modal .institution {
-    font-weight: bold;
-    color: var(--secondary-color);
-}
-
-.close-btn {
-    position: absolute;
-    top: 0;
-    right: 10px;
-    background-color: transparent;
-    border: none;
-    font-size: 3rem;
-    color: var(--primary-color);
-    cursor: pointer;
-    transition: var(--transition);
-}
-
-.close-btn:hover {
-    color: var(--tertiary-color);
-}
-
-.see-more-btn {
-    background-color: var(--primary-color);
-    border: none;
-    border-radius: 25px;
-    color: var(--white);
-    cursor: pointer;
-    font-size: 16px;
-    padding: 10px 20px;
-    transition: var(--transition);
-    display: inline-block;
-    margin-top: 10px;
-}
-
-.see-more-btn:hover {
-    background-color: var(--tertiary-color);
-}
-
-@media (max-width: 768px) {
+/* Estilos responsivos */
+@media (max-width: 48rem) {
     .controls {
         flex-direction: column;
         align-items: stretch;
@@ -281,7 +289,7 @@ body {
 
     .search-container {
         margin-right: 0;
-        margin-bottom: 10px;
+        margin-bottom: .625rem;
     }
 
     .toggle-container {
@@ -289,10 +297,10 @@ body {
     }
 
     .modal-content {
-        padding: 20px;
+        padding: 1.25rem;
     }
 
     .carousel-item img {
-        height: 200px;
+        height: 12.5rem;
     }
 }
